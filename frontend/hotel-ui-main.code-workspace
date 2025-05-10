@@ -1,0 +1,14 @@
+{
+  "folders": [
+	{
+		"path": ".."
+	},
+	{
+		"path": "../../server"
+	},
+	{
+		"path": "../../Department_Management_Project"
+	}
+],
+  "settings": {}
+}
