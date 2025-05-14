@@ -55,10 +55,13 @@ const AddRoomForm = ({ onSuccess }) => {
         },
       });
 
-      console.log("✔ Thêm phòng thành công:", res.data);
+      console.log("✔  Add room successfully", res.data);
       onSuccess?.();
     } catch (err) {
-      console.error("❌ Lỗi khi gửi form:", err.response?.data || err.message);
+      console.error(
+        "❌ Error when submit form:",
+        err.response?.data || err.message
+      );
     }
   };
 
