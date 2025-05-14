@@ -26,7 +26,7 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
     e.preventDefault();
     const preparedData = {
       ...formData,
-      landlordID: formData.landlordID._id || formData.landlordID, // ép thành _id
+      landlordID: formData.landlordID._id || formData.landlordID,
     };
 
     const updatedData = new FormData();
@@ -94,7 +94,7 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
                     onChange={handleChange}
                     required
                   />
-                  <span style={{ marginLeft: "8px" }}>Người</span>
+                  <span style={{ marginLeft: "8px" }}>People</span>
                 </div>
               </div>
             </div>

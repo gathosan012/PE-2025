@@ -23,17 +23,14 @@ const router = createBrowserRouter([
     path: "/rooms",
     element: <Room />,
   },
-  /*{
+  {
     path: "/rooms",
     element: <AddRoomForm />,
   },
-  {
-    path: "/rooms/edit/:id",
-    element: <EditRoomForm />,
-  },*/
+  { path: "/rooms/edit/:id", element: <EditRoomForm /> },
+  { path: "/add-customer/:roomId", element: <AddCustomerForm /> },
   { path: "/service", element: <Service /> },
   { path: "/service/edit", element: <ServiceForm /> },
-  { path: "/add-customer/:roomId", element: <AddCustomerForm /> },
 ]);
 
 createRoot(document.getElementById("root")).render(

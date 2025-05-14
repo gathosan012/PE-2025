@@ -29,7 +29,7 @@
 }
 .room-container {
   flex: 1;
-  overflow-y: auto; /*cho phép cuộn */
+  overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
