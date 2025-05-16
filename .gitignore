@@ -1,0 +1,46 @@
+# =======================
+# General
+# =======================
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# dotenv
+.env
+.env.*
+
+# System files
+.DS_Store
+
+# IDE/editor
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =======================
+# Frontend
+# =======================
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+
+# =======================
+# Backend
+# =======================
+backend/node_modules/
+backend/dist/
+backend/__pycache__/
+backend/venv/
+backend/*.pyc
