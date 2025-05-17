@@ -10,6 +10,8 @@ import EditRoomForm from "./components/EditRoomForm";
 import Service from "./pages/Service";
 import ServiceForm from "./pages/ServiceForm";
 import AddCustomerForm from "./components/AddCustomerForm";
+import Electric from "./pages/Electric.jsx";
+import Water from "./pages/Water.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -23,17 +25,22 @@ const router = createBrowserRouter([
     path: "/rooms",
     element: <Room />,
   },
-  /*{
+  {
     path: "/rooms",
     element: <AddRoomForm />,
   },
-  {
-    path: "/rooms/edit/:id",
-    element: <EditRoomForm />,
-  },*/
+  { path: "/rooms/edit/:id", element: <EditRoomForm /> },
+  { path: "/add-customer/:roomId", element: <AddCustomerForm /> },
   { path: "/service", element: <Service /> },
   { path: "/service/edit", element: <ServiceForm /> },
-  { path: "/add-customer/:roomId", element: <AddCustomerForm /> },
+   {
+    path: "/electric",
+    element: <Electric/>
+  },
+  {
+    path: "/water",
+    element: <Water/>
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(

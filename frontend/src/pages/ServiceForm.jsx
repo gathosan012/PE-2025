@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import "../styling/components/ServiceForm.scss";
 import { useNavigate } from "react-router-dom";
 
-export default function ServiceForm({
+function ServiceForm({
   title = "Thêm dịch vụ",
   initialData = { name: "", type: "", price: 0, active: true, note: "" },
   onSubmit,
   onCancel,
+  toggleStatus,
+  toggleFunction,
 }) {
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState({});
@@ -66,6 +68,19 @@ export default function ServiceForm({
           {errors.price && <div className="error">{errors.price}</div>}
         </div>
 
+        <div className="edit-form-group">
+          <label className="label-inline">
+            <input
+              type="checkbox"
+              name="active"
+              checked={formData.active}
+              onChange={handleChange}
+              className="service-checkbox"
+            />
+            Đang dùng
+          </label>
+        </div>
+
         <div className="edit-form-group full-row">
           <label className="service-label">Ghi chú</label>
           <textarea
@@ -80,7 +95,10 @@ export default function ServiceForm({
       <div className="flex justify-between items-center pt-4">
         <p className="text-red-600 text-sm">(*): Thông tin bắt buộc</p>
         <div className="space-x-2">
-          <button className="btn-back" onClick={() => navigate("/service")}>
+          <button
+            className="btn-back"
+            onClick={() => toggleFunction(!toggleStatus)}
+          >
             ⬅ Quay về
           </button>
           <button
@@ -94,18 +112,5 @@ export default function ServiceForm({
     </form>
   );
 }
-/*<div className="edit-form-group">
-          <label className="service-label">Loại *</label>
-          <select
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            className="service-input"
-          >
-            <option value="">Chọn loại dịch vụ</option>
-            <option value="ĐIỆN">ĐIỆN</option>
-            <option value="NƯỚC">NƯỚC</option>
-            <option value="KHÁC">KHÁC</option>
-          </select>
-          {errors.type && <p className="error">{errors.type}</p>}
-        </div>*/
+
+export default ServiceForm;

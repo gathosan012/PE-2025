@@ -33,7 +33,7 @@ const AddRoomForm = ({ onSuccess }) => {
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]); // Chọn file duy nhất
+    setImage(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -108,7 +108,7 @@ const AddRoomForm = ({ onSuccess }) => {
                     onChange={handleChange}
                     required
                   />
-                  <span style={{ marginLeft: "8px" }}>Người</span>
+                  <span style={{ marginLeft: "8px" }}>People</span>
                 </div>
               </div>
             </div>
@@ -184,7 +184,7 @@ const AddRoomForm = ({ onSuccess }) => {
                     onChange={handleChange}
                     required
                   />
-                  <span style={{ marginLeft: "8px" }}>Phòng</span>
+                  <span style={{ marginLeft: "8px" }}>Room</span>
                 </div>
               </div>
             </div>

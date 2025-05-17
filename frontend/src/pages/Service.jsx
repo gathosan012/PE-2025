@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceTable from "../components/ServiceTable";
-import "../styling/components/ServicePage.scss";
+import "../styling/service.scss";
+import SidePanel from "../components/SidePanel";
+import ServiceForm from "./ServiceForm";
 
 const initialServices = [
   { id: 1, name: "Điện", type: "ĐIỆN", price: 3000, active: true },
@@ -14,6 +16,8 @@ export default function Service() {
   const [services, setServices] = useState(initialServices);
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isClicked, setIsClicked] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSelect = (id) => {
@@ -38,40 +42,50 @@ export default function Service() {
   };
 
   return (
-    <div className="service-wrapper">
-      <div className="service-page">
-        <h1 className="service-title">Danh sách dịch vụ</h1>
-
-        <div className="actions">
-          <button className="add" onClick={() => navigate("/service/edit")}>
-            + Thêm dịch vụ
-          </button>
-          <button
-            className="delete"
-            onClick={handleDeleteSelected}
-            disabled={selectedIds.length === 0}
-          >
-            ❌ Xóa
-          </button>
+    <div className={isClicked ? "service-wrapper toggled" : "service-wrapper"}>
+      {isClicked && (
+        <ServiceForm
+          toggleStatus={isClicked}
+          toggleFunction={setIsClicked}
+        ></ServiceForm>
+      )}
+      <SidePanel selected="service" />
+      <div className="service-content">
+        <div className="service-container">
+          <div className="service-page">
+            <h1 className="service-title">Danh sách dịch vụ</h1>
+            <div className="actions">
+              <button className="add" onClick={() => setIsClicked(!isClicked)}>
+                + Thêm dịch vụ
+              </button>
+              <button
+                className="delete"
+                onClick={handleDeleteSelected}
+                disabled={selectedIds.length === 0}
+              >
+                ❌ Xóa
+              </button>
+            </div>
+          </div>
+          {/* Ô tìm kiếm */}
+          <div className="service-search-bar">
+            <input
+              type="text"
+              placeholder="Tìm theo tên dịch vụ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="service-table">
+            <ServiceTable
+              services={services}
+              selectedIds={selectedIds}
+              onSelect={handleSelect}
+              onDelete={handleDelete}
+              onEdit={(id) => navigate(`/edit-service/${id}`)}
+            />
+          </div>
         </div>
-      </div>
-      {/* Ô tìm kiếm */}
-      <div className="service-search-bar">
-        <input
-          type="text"
-          placeholder="Tìm theo tên dịch vụ..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      <div className="service-table">
-        <ServiceTable
-          services={services}
-          selectedIds={selectedIds}
-          onSelect={handleSelect}
-          onDelete={handleDelete}
-          onEdit={(id) => navigate(`/edit-service/${id}`)}
-        />
       </div>
     </div>
   );
