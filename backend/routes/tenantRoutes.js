@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get("/", getAllTenants);
 router.get("/:id", getTenantById);
-router.post("/", createTenant);
+router.post("/add", createTenant);
 router.put("/:id", updateTenant);
 router.delete("/:id", deleteTenant);
 
