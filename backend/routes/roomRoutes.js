@@ -12,18 +12,18 @@ import {
   deleteRoom,
 } from "../controllers/roomController.js";
 
-const roomRouter = express.Router();
+const roomRoutes = express.Router();
 
-roomRouter.get("/", getAllRooms); //get room cards
-roomRouter.post(
+roomRoutes.get("/", getAllRooms); //get room cards
+roomRoutes.post(
   "/",
 
   upload.single("image"),
   addRoom
 );
-roomRouter.get("/:id", getRoomById); // get room information
-roomRouter.put("/:id", upload.single("image"), updateRoom); // Update RoomInfo
-roomRouter.delete("/:id", deleteRoom); // Delete RoomInfo
+roomRoutes.get("/:id", getRoomById); // get room information
+roomRoutes.put("/:id", upload.single("image"), updateRoom); // Update RoomInfo
+roomRoutes.delete("/:id", deleteRoom); // Delete RoomInfo
 
 //authenticateUser,authorizeLandlord,
-export default roomRouter;
+export default roomRoutes;
