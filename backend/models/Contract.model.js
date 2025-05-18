@@ -2,14 +2,26 @@ import mongoose from "mongoose";
 
 const contractSchema = new mongoose.Schema(
   {
-    room_id: { type: mongoose.Schema.Types.ObjectId, ref: "Room" },
-    tenant_id: { type: mongoose.Schema.Types.ObjectId, ref: "Tenant" },
-    startDate: Date,
-    endDate: Date,
+    roomId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Room",
+      required: true,
+    },
+    tenantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tenant",
+      required: true,
+    },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
     monthlyFee: Number,
-    deposit: Number,
-    status: String,
-    service_id: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
+    deposit: { type: Number, required: true },
+    status: {
+      type: String,
+      enum: ["active", "terminated", "pending"],
+      default: "active",
+    },
+    serviceIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
   },
   { timestamps: true }
 );
