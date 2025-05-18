@@ -2,7 +2,9 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Authentication from "./pages/Authentication";
+//import Authentication from "./pages/Authentication";
+import SignIn from "./components/SignIn";
+import SignUp from "./components/SignUp";
 import Home from "./pages/Home";
 import Room from "./pages/Room";
 import AddRoomForm from "./components/AddRoomForm";
@@ -12,10 +14,15 @@ import ServiceForm from "./pages/ServiceForm";
 import AddCustomerForm from "./components/AddCustomerForm";
 import Electric from "./pages/Electric.jsx";
 import Water from "./pages/Water.jsx";
+
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Authentication />,
+    path: "/login",
+    element: <SignIn />,
+  },
+  {
+    path: "/register",
+    element: <SignUp />,
   },
   {
     path: "/home",
@@ -33,13 +40,13 @@ const router = createBrowserRouter([
   { path: "/add-customer/:roomId", element: <AddCustomerForm /> },
   { path: "/service", element: <Service /> },
   { path: "/service/edit", element: <ServiceForm /> },
-   {
+  {
     path: "/electric",
-    element: <Electric/>
+    element: <Electric />,
   },
   {
     path: "/water",
-    element: <Water/>
+    element: <Water />,
   },
 ]);
 
