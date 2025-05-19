@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  authenticateUser,
+  authenticateToken,
   authorizeLandlord,
 } from "../middleware/authMiddleware.js";
 import upload from "../middleware/upload.js";
@@ -14,16 +14,22 @@ import {
 
 const roomRoutes = express.Router();
 
-roomRoutes.get("/", getAllRooms); //get room cards
+roomRoutes.get("/", authenticateToken, authorizeLandlord, getAllRooms);
 roomRoutes.post(
   "/",
-
+  authenticateToken,
+  authorizeLandlord,
   upload.single("image"),
   addRoom
 );
-roomRoutes.get("/:id", getRoomById); // get room information
-roomRoutes.put("/:id", upload.single("image"), updateRoom); // Update RoomInfo
-roomRoutes.delete("/:id", deleteRoom); // Delete RoomInfo
+roomRoutes.get("/:id", authenticateToken, authorizeLandlord, getRoomById);
+roomRoutes.put(
+  "/:id",
+  authenticateToken,
+  authorizeLandlord,
+  upload.single("image"),
+  updateRoom
+);
+roomRoutes.delete("/:id", authenticateToken, authorizeLandlord, deleteRoom);
 
-//authenticateUser,authorizeLandlord,
 export default roomRoutes;
