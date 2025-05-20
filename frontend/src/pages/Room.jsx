@@ -29,17 +29,41 @@ const Room = () => {
 
   const [showAddRoom, setShowAddRoom] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
+
   const fetchRooms = () => {
-    fetch("http://localhost:5000/api/rooms")
-      .then((res) => res.json())
-      .then((data) => {
-        setRooms(data);
-        setOriginalRooms(data);
+    const token = localStorage.getItem("authToken");
+    // Kiểm tra nếu token không tồn tại
+    if (!token) {
+      console.error("No token found in localStorage");
+      // Có thể redirect về trang login ở đây
+      return;
+    }
+
+    console.log("Token frontend:", token); // Debug token
+    axios
+      .get("http://localhost:5000/api/rooms", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .catch((err) => console.error("Lỗi khi fetch phòng:", err));
+
+      .then((res) => {
+        setRooms(res.data);
+        setOriginalRooms(res.data);
+      })
+      .catch((err) => {
+        console.error("Error when fetch room!", err);
+        alert(" Could not fetch room data!");
+      });
   };
   useEffect(() => {
-    fetchRooms();
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "landlord") {
+      alert("Access denied. Only landlord can access this page.");
+      navigate("/"); // hoặc điều hướng tới trang phù hợp
+    } else {
+      fetchRooms(); // Chỉ fetch khi role hợp lệ
+    }
   }, []);
 
   const handleRoomStatusChange = (e) => {

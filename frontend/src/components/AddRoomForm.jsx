@@ -16,7 +16,6 @@ const AddRoomForm = ({ onSuccess }) => {
     allowMale: true,
     allowFemale: true,
     description: "",
-    image: null,
   });
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
@@ -47,11 +46,18 @@ const AddRoomForm = ({ onSuccess }) => {
     if (image) form.append("image", image); //add image file
 
     try {
-      //const token = localStorage.getItem("token"); // Get token from localStorage
+      const token = localStorage.getItem("authToken");
+      console.log("Token from localStorage:", token);
+      console.log("Token sent:", token); // Kiểm tra token
+
+      if (!token) {
+        alert("You are not logged in or token missing!");
+        return;
+      }
+
       const res = await axios.post("http://localhost:5000/api/rooms", form, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          //Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

@@ -28,7 +28,7 @@ function SignIn() {
       if (response.status === 200) {
         const { accessToken, user } = response.data;
 
-        localStorage.setItem("token", accessToken);
+        localStorage.setItem("authToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
 
         alert("Login successful");
