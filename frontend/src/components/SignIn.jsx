@@ -4,7 +4,6 @@ import axios from "axios";
 import "../styling/components/signin.scss";
 
 function SignIn() {
-  console.log("Rendering SignIn");
   const navigate = useNavigate();
 
   const [account, setAccount] = useState({
@@ -17,27 +16,45 @@ function SignIn() {
     setAccount({ ...account, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post("http://localhost:5000/api/users/login", account)
-      .then((response) => {
-        if (response.status === 200) {
-          alert("Login successful");
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/signin",
+        account
+      );
+
+      if (response.status === 200) {
+        const { accessToken, user } = response.data;
+
+        localStorage.setItem("token", accessToken);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        alert("Login successful");
+
+        if (user.role === "admin") {
+          navigate("/admin");
+        } else if (user.role === "landlord") {
           navigate("/home");
+        } else {
+          navigate("/");
         }
-      })
-      .catch((error) => {
-        console.error("Login error:", error);
-        alert(
-          "Login failed: " + (error.response?.data?.message || "Unknown error")
-        );
-      });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(
+        "Login failed: " +
+          (error.response?.data?.message ||
+            "Server error or invalid credentials")
+      );
+    }
   };
+
   const handleRedirectToRegister = () => {
     navigate("/register");
   };
+
   return (
     <div className="auth-container">
       <div className="background-container" />
@@ -85,4 +102,5 @@ function SignIn() {
     </div>
   );
 }
+
 export default SignIn;
