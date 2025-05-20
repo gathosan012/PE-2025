@@ -10,8 +10,11 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
   const [formData, setFormData] = useState(roomData);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "image") {
+    const { name, value, type, checked, files } = e.target;
+
+    if (type === "checkbox") {
+      setFormData({ ...formData, [name]: checked });
+    } else if (name === "image") {
       setFormData({ ...formData, image: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -34,9 +37,15 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
       updatedData.append(key, preparedData[key]);
     }
     try {
+      const token = localStorage.getItem("authToken");
       await axios.put(
         `http://localhost:5000/api/rooms/${formData._id}`,
-        updatedData
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       alert("Room updated successfully!");
       onSuccess();

@@ -16,7 +16,6 @@ export const addRoom = async (req, res) => {
       allowFemale,
       description,
       status,
-      //landlordID,
     } = req.body;
 
     const image = req.file ? req.file.filename : null;
@@ -50,7 +49,7 @@ export const addRoom = async (req, res) => {
       description,
       image,
       status,
-      landlordID: "6806750b7c3816985129f742", // this should be dynamic if you implement authentication
+      landlordID: req.user.id,
     });
 
     await newRoom.save();
@@ -75,7 +74,9 @@ export const getAllRooms = async (req, res) => {
     const { roomStatus, feeStatus, roomSearch, area, numberBedroom, address } =
       req.query;
 
-    const query = {};
+    const query = {
+      landlordID: req.user.id,
+    };
 
     if (roomStatus) query.status = roomStatus;
     if (feeStatus) query.feeStatus = feeStatus;
@@ -99,7 +100,16 @@ export const getAllRooms = async (req, res) => {
 export const getRoomById = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
+
     if (!room) return res.status(404).json({ message: "Room not found." });
+
+    // Check if the user is the landlord of the room
+    if (room.landlordID.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized access to this room." });
+    }
+
     res.json(room);
   } catch (err) {
     res.status(500).json({
@@ -112,8 +122,18 @@ export const getRoomById = async (req, res) => {
 // Update room
 export const updateRoom = async (req, res) => {
   try {
-    const updatedData = { ...req.body };
+    const room = await Room.findById(req.params.id);
 
+    if (!room) return res.status(404).json({ message: "Room not found." });
+
+    // Check if the user is the landlord of the room
+    if (room.landlordID.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to update this room." });
+    }
+
+    const updatedData = { ...req.body };
     if (req.file) {
       updatedData.image = req.file.filename;
     }
@@ -121,14 +141,8 @@ export const updateRoom = async (req, res) => {
     const updatedRoom = await Room.findByIdAndUpdate(
       req.params.id,
       updatedData,
-      {
-        new: true,
-      }
+      { new: true }
     );
-
-    if (!updatedRoom) {
-      return res.status(404).json({ message: "Room not found." });
-    }
 
     res.json({
       message: "Room updated successfully.",
@@ -145,10 +159,20 @@ export const updateRoom = async (req, res) => {
 // Delete room
 export const deleteRoom = async (req, res) => {
   try {
-    const deletedRoom = await Room.findByIdAndDelete(req.params.id);
-    if (!deletedRoom) {
+    const room = await Room.findById(req.params.id);
+
+    if (!room)
       return res.status(404).json({ message: "Room not found to delete." });
+
+    // check authentication
+    if (room.landlordID.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to delete this room." });
     }
+
+    await room.deleteOne();
+
     res.json({ message: "Room deleted successfully." });
   } catch (error) {
     console.error("Error deleting room:", error);

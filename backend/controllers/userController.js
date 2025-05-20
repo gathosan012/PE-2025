@@ -61,9 +61,9 @@ export const SignInUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Wrong password!" });
     }
-
+    console.log("User role on sign in:", user.role);
     const accessToken = jwt.sign(
-      { _id: user._id, role: user.role },
+      { id: user._id, role: user.role },
       SECRET_CODE,
       { expiresIn: "1d" }
     );
