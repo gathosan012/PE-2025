@@ -55,7 +55,7 @@ const Room = () => {
         console.error("Error when fetch room!", err);
         alert(" Could not fetch room data!");
       });
-  };
+   };
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || user.role !== "landlord") {
