@@ -1,4 +1,5 @@
 import Room from "../models/Room.model.js";
+import Contract from "../models/Contract.model.js";
 
 // Add new room
 export const addRoom = async (req, res) => {
@@ -85,10 +86,37 @@ export const getAllRooms = async (req, res) => {
     if (numberBedroom) query.numberBedroom = Number(numberBedroom);
     if (address) query.address = { $regex: address, $options: "i" };
 
-    const rooms = await Room.find(query).populate("landlordID", "fullname");
+    const rooms = await Room.find(query).lean();
 
-    res.status(200).json(rooms);
+    const roomIds = rooms.map((r) => r._id);
+
+    const activeContracts = await Contract.find({
+      roomId: { $in: roomIds },
+      status: "active",
+    })
+      .populate("tenantId", "fullname")
+      .lean();
+
+    const contractMap = {};
+    activeContracts.forEach((c) => {
+      contractMap[c.roomId.toString()] = {
+        tenantName: c.tenantId?.fullname || null,
+        contractId: c._id,
+      };
+    });
+
+    const roomsWithTenant = rooms.map((room) => {
+      const match = contractMap[room._id.toString()];
+      return {
+        ...room,
+        currentTenant: match?.tenantName || null,
+        currentContractId: match?.contractId || null,
+      };
+    });
+
+    res.status(200).json(roomsWithTenant);
   } catch (err) {
+    console.error("❌ getAllRooms failed:", err);
     res.status(500).json({
       message: "Error fetching room list",
       error: err.message,

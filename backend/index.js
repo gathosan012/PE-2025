@@ -5,6 +5,7 @@ import connectDB from "./db/db.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import tenantRoutes from "./routes/tenantRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import contractRoutes from "./routes/contractRoutes.js";
 dotenv.config();
 connectDB();
 
@@ -20,7 +21,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/tenant", tenantRoutes);
-
+app.use("/api/contracts", contractRoutes);
 app.use("/uploads", express.static("uploads"));
 const PORT = process.env.PORT || 5000;
 

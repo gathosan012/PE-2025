@@ -16,6 +16,12 @@ const contractSchema = new mongoose.Schema(
     endDate: { type: Date, required: true },
     monthlyFee: Number,
     deposit: { type: Number, required: true },
+    payPer: {
+      type: Number,
+      enum: [1, 2, 3],
+      default: 1,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["active", "terminated", "pending"],

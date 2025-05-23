@@ -60,9 +60,9 @@ const Room = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || user.role !== "landlord") {
       alert("Access denied. Only landlord can access this page.");
-      navigate("/"); // hoặc điều hướng tới trang phù hợp
+      navigate("/login");
     } else {
-      fetchRooms(); // Chỉ fetch khi role hợp lệ
+      fetchRooms();
     }
   }, []);
 
@@ -102,7 +102,6 @@ const Room = () => {
   };
 
   const handleCustomersClick = () => {
-    // Chức năng quản lý khách hàng (có thể điều hướng đến trang khách hàng)
     console.log("Quản lý khách hàng");
   };
 
@@ -212,8 +211,17 @@ const Room = () => {
                 </div>
                 <div className="room-number"> 🏠Room {room.roomNumber}</div>
 
-                {room.rented ? (
-                  <div className="tenant">👤 {room.tenant}</div>
+                {room.currentTenant && room.currentContractId ? (
+                  <button
+                    className="btn tenant-name-btn"
+                    onClick={() =>
+                      navigate(
+                        `/add-customer/${room._id}/${room.currentContractId}`
+                      )
+                    }
+                  >
+                    👤 {room.currentTenant}
+                  </button>
                 ) : (
                   <button
                     className="btn add-tenant"
@@ -227,11 +235,11 @@ const Room = () => {
                   <div className="num-bedrooms">🛏️ {room.numberBedroom}</div>
                 </div>
                 <div className="price">
-                  🏷️{room.price.toLocaleString()} vnđ/month
+                  🏷️ {room.price.toLocaleString()} vnđ/month
                 </div>
                 <div className="address">
                   {" "}
-                  📍{room.address.toLocaleString()}
+                  📍 {room.address.toLocaleString()}
                 </div>
                 <div className="room-actions">
                   <button

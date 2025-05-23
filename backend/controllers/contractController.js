@@ -1,5 +1,6 @@
 import Room from "../models/Room.model.js";
 import Service from "../models/Service.model.js";
+import Contract from "../models/Contract.model.js";
 export const createContract = async (req, res) => {
   try {
     const {
@@ -7,8 +8,8 @@ export const createContract = async (req, res) => {
       tenantId,
       startDate,
       endDate,
-      monthlyFee,
       deposit,
+      payPer,
       status,
       //serviceIds,
     } = req.body;
@@ -19,6 +20,8 @@ export const createContract = async (req, res) => {
     //get Landlord from room
     const room = await Room.findById(roomId);
     if (!room) return res.status(404).json({ message: "Room not found." });
+
+    const monthlyFee = room.price;
 
     const landlordID = room.landlordID;
     //get service of this landlord
@@ -33,6 +36,7 @@ export const createContract = async (req, res) => {
       endDate,
       monthlyFee,
       deposit,
+      payPer,
       status,
       serviceIds, // Auto-injected
     });
@@ -68,8 +72,8 @@ export const getAllContracts = async (req, res) => {
 export const getContractById = async (req, res) => {
   try {
     const contract = await Contract.findById(req.params.id)
-      .populate("roomId", "roomNumber")
-      .populate("tenantId", "fullName");
+      .populate("roomId")
+      .populate("tenantId");
     //.populate("serviceIds", "name");
 
     if (!contract)
@@ -91,7 +95,6 @@ export const updateContract = async (req, res) => {
       req.body,
       { new: true }
     );
-
     if (!updatedContract) {
       return res.status(404).json({ message: "Contract not found." });
     }
@@ -121,4 +124,14 @@ export const deleteContract = async (req, res) => {
       .status(500)
       .json({ message: "Error deleting contract.", error: err.message });
   }
+};
+
+export const getActiveContractByRoom = async (req, res) => {
+  const { roomId } = req.params;
+  const contract = await Contract.findOne({
+    roomId,
+    status: "active",
+  }).populate("tenantId", "fullname");
+  if (!contract) return res.json({ tenant: null });
+  return res.json({ tenant: contract.tenantId });
 };

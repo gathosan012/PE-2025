@@ -1,4 +1,4 @@
-import Customer from "../models/Tenant.model.js";
+import Tenant from "../models/Tenant.model.js";
 export const createTenant = async (req, res) => {
   const {
     fullname,
@@ -25,7 +25,7 @@ export const createTenant = async (req, res) => {
   }
 
   try {
-    const tenant = new Customer(req.body);
+    const tenant = new Tenant(req.body);
     const savedTenant = await tenant.save();
     res.status(201).json({ success: true, tenant: savedTenant });
   } catch (err) {
@@ -35,7 +35,7 @@ export const createTenant = async (req, res) => {
 // Get all tenants
 export const getAllTenants = async (req, res) => {
   try {
-    const tenants = await Customer.find().sort({ createdAt: -1 });
+    const tenants = await Tenant.find().sort({ createdAt: -1 });
     res.status(200).json(tenants);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -44,7 +44,7 @@ export const getAllTenants = async (req, res) => {
 // Get tenant by ID
 export const getTenantById = async (req, res) => {
   try {
-    const tenant = await Customer.findById(req.params.id);
+    const tenant = await Tenant.findById(req.params.id);
     if (!tenant) return res.status(404).json({ message: "Tenant not found" });
     res.status(200).json(tenant);
   } catch (err) {
@@ -54,7 +54,7 @@ export const getTenantById = async (req, res) => {
 // Update tenant
 export const updateTenant = async (req, res) => {
   try {
-    const updatedTenant = await Customer.findByIdAndUpdate(
+    const updatedTenant = await Tenant.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
@@ -69,7 +69,7 @@ export const updateTenant = async (req, res) => {
 // Delete tenant
 export const deleteTenant = async (req, res) => {
   try {
-    const deletedTenant = await Customer.findByIdAndDelete(req.params.id);
+    const deletedTenant = await Tenant.findByIdAndDelete(req.params.id);
     if (!deletedTenant)
       return res.status(404).json({ message: "Tenant not found" });
     res.status(200).json({ message: "Tenant deleted" });
