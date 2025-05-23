@@ -87,7 +87,7 @@ const AddCustomerForm = () => {
 
       try {
         if (contractId) {
-          // Fetch contract (đã bao gồm tenant)
+          // Fetch contract (Từ tenantId fetch được tenant Information)
           const res = await axios.get(
             `http://localhost:5000/api/contracts/${contractId}`,
             {
@@ -129,7 +129,7 @@ const AddCustomerForm = () => {
             });
           }
         } else {
-          // Nếu chưa có contract thì lấy giá phòng
+          //get price of room
           const res = await axios.get(
             `http://localhost:5000/api/rooms/${roomId}`,
             {
@@ -175,6 +175,7 @@ const AddCustomerForm = () => {
         roomId,
         tenantId,
         ...contractData,
+        status: "active",
       };
 
       const response = await axios.post(

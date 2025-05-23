@@ -9,7 +9,7 @@ import {
   getAllRooms,
   getRoomById,
   updateRoom,
-  deleteRoom,
+  updateRoomStatus,
 } from "../controllers/roomController.js";
 
 const roomRoutes = express.Router();
@@ -30,6 +30,11 @@ roomRoutes.put(
   upload.single("image"),
   updateRoom
 );
-roomRoutes.delete("/:id", authenticateToken, authorizeLandlord, deleteRoom);
+roomRoutes.patch(
+  "/:id/status",
+  authenticateToken,
+  authorizeLandlord,
+  updateRoomStatus
+);
 
 export default roomRoutes;
