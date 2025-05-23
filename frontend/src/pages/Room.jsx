@@ -24,9 +24,7 @@ const Room = () => {
 
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
-
   const [originalRooms, setOriginalRooms] = useState([]);
-
   const [showAddRoom, setShowAddRoom] = useState(false);
   const [editingRoom, setEditingRoom] = useState(null);
 
@@ -48,8 +46,11 @@ const Room = () => {
       })
 
       .then((res) => {
-        setRooms(res.data);
-        setOriginalRooms(res.data);
+        const activeRooms = res.data.filter(
+          (room) => room.status !== "disabled"
+        );
+        setRooms(activeRooms);
+        setOriginalRooms(activeRooms);
       })
       .catch((err) => {
         console.error("Error when fetch room!", err);
@@ -69,38 +70,41 @@ const Room = () => {
   const handleRoomStatusChange = (e) => {
     setRoomStatus(e.target.value);
   };
-
   const handleFeeStatusChange = (e) => {
     setFeeStatus(e.target.value);
   };
+  const filterRooms = async () => {
+    const token = localStorage.getItem("authToken");
 
-  const filterRooms = () => {
-    const filtered = originalRooms.filter((room) => {
-      //const matchRoomStatus = !roomStatus || room.status === roomStatus;
-      //const matchFeeStatus = !feeStatus || room.feeStatus === feeStatus;
-      const matchRoomSearch =
-        !roomSearch || room.roomNumber?.toString().includes(roomSearch);
-      const matchArea = area === "" || Number(room.area) === Number(area);
-      const matchBedroom =
-        numberBedroom === "" ||
-        Number(room.numberBedroom) === Number(numberBedroom);
-      const matchAddress =
-        !address || room.address?.toLowerCase().includes(address.toLowerCase());
+    try {
+      const queryParams = new URLSearchParams();
 
-      return (
-        //matchRoomStatus &&
-        //matchFeeStatus &&
-        matchRoomSearch && matchArea && matchBedroom && matchAddress
+      if (roomStatus) queryParams.append("roomStatus", roomStatus);
+      if (feeStatus) queryParams.append("feeStatus", feeStatus);
+      if (roomSearch) queryParams.append("roomSearch", roomSearch);
+      if (area) queryParams.append("area", area);
+      if (numberBedroom) queryParams.append("numberBedroom", numberBedroom);
+      if (address) queryParams.append("address", address);
+
+      const response = await axios.get(
+        `http://localhost:5000/api/rooms?${queryParams.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    });
 
-    setRooms(filtered);
+      setRooms(response.data);
+    } catch (err) {
+      console.error("Error filtering rooms:", err);
+      alert("Could not filter rooms.");
+    }
   };
 
   const handleSearchClick = () => {
     filterRooms();
   };
-
   const handleCustomersClick = () => {
     console.log("Quản lý khách hàng");
   };
@@ -111,15 +115,48 @@ const Room = () => {
   };
 
   const handleDeleteRoom = async (roomId) => {
+    const room = rooms.find((r) => r._id === roomId);
+    if (room.currentContractId) {
+      alert("⚠️ This room has an active contract and cannot be disabled.");
+      return;
+    }
     try {
-      await axios.delete(`http://localhost:5000/api/rooms/${roomId}`);
+      const token = localStorage.getItem("authToken");
+      await axios.patch(
+        `http://localhost:5000/api/rooms/${roomId}/status`,
+        { status: "disabled" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setRooms((prevRooms) => prevRooms.filter((room) => room._id !== roomId));
 
-      alert("Delete room successfully!");
+      alert("Room has been archived successfully!");
     } catch (error) {
-      console.error("Lỗi xóa phòng:", error);
-      alert("There was an error deleting the room.");
+      console.error("Error when updating room status", error);
+      alert("There was an error disabling the room.");
+    }
+  };
+  const handleRestoreRoom = async (roomId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.patch(
+        `http://localhost:5000/api/rooms/${roomId}/status`,
+        { status: "available" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Room has been restored.");
+      fetchRooms(); // refresh list
+    } catch (err) {
+      console.error("Error restoring room:", err);
+      alert("Could not restore room.");
     }
   };
 
@@ -140,8 +177,9 @@ const Room = () => {
               aria-label="Room status"
             >
               <option value="">Room status</option>
-              <option value="Trống">Available</option>
-              <option value="Đang thuê">Rented</option>
+              <option value="available">Available</option>
+              <option value="rented">Rented</option>
+              <option value="disabled">Disabled</option>
             </select>
             <select
               className="dropdown"
@@ -210,7 +248,17 @@ const Room = () => {
                   )}
                 </div>
                 <div className="room-number"> 🏠Room {room.roomNumber}</div>
-
+                {room.status === "disabled" && (
+                  <div
+                    style={{
+                      color: "gray",
+                      fontStyle: "italic",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    (This room is currently disabled)
+                  </div>
+                )}
                 {room.currentTenant && room.currentContractId ? (
                   <button
                     className="btn tenant-name-btn"
@@ -219,6 +267,7 @@ const Room = () => {
                         `/add-customer/${room._id}/${room.currentContractId}`
                       )
                     }
+                    disabled={room.status === "disabled"}
                   >
                     👤 {room.currentTenant}
                   </button>
@@ -226,6 +275,7 @@ const Room = () => {
                   <button
                     className="btn add-tenant"
                     onClick={() => handleAddTenant(room._id)}
+                    disabled={room.status === "disabled"}
                   >
                     ➕ Add Tenant
                   </button>
@@ -249,12 +299,22 @@ const Room = () => {
                     ✏️ Edit
                   </button>
 
-                  <button
-                    className="btn delete-btn"
-                    onClick={() => handleDeleteRoom(room._id)}
-                  >
-                    🗑️ Delete
-                  </button>
+                  {room.status === "disabled" ? (
+                    <button
+                      className="btn"
+                      style={{ backgroundColor: "#5cb85c", color: "#fff" }}
+                      onClick={() => handleRestoreRoom(room._id)}
+                    >
+                      ♻️ Restore
+                    </button>
+                  ) : (
+                    <button
+                      className="btn delete-btn"
+                      onClick={() => handleDeleteRoom(room._id)}
+                    >
+                      🗑️ Delete
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -264,8 +324,8 @@ const Room = () => {
               <div className="modal-content">
                 <AddRoomForm
                   onSuccess={() => {
-                    setShowAddRoom(false); // Đóng popup
-                    fetchRooms(); // Reload lại danh sách
+                    setShowAddRoom(false);
+                    fetchRooms();
                   }}
                 />
               </div>

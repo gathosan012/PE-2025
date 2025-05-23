@@ -24,7 +24,7 @@ const contractSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "terminated", "pending"],
+      enum: ["active", "terminated", "expired"],
       default: "active",
     },
     serviceIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],

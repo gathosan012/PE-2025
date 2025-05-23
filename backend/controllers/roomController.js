@@ -24,11 +24,10 @@ export const addRoom = async (req, res) => {
     if (
       !roomNumber ||
       !price ||
-      !length ||
-      !width ||
       !maxPeople ||
       !area ||
-      !numberBedroom
+      !numberBedroom ||
+      !address
     ) {
       return res.status(400).json({
         success: false,
@@ -77,6 +76,7 @@ export const getAllRooms = async (req, res) => {
 
     const query = {
       landlordID: req.user.id,
+      status: { $ne: "disabled" },
     };
 
     if (roomStatus) query.status = roomStatus;
@@ -111,6 +111,12 @@ export const getAllRooms = async (req, res) => {
         ...room,
         currentTenant: match?.tenantName || null,
         currentContractId: match?.contractId || null,
+        status:
+          room.status === "disabled"
+            ? "disabled"
+            : match
+            ? "rented"
+            : "available",
       };
     });
 
@@ -183,29 +189,64 @@ export const updateRoom = async (req, res) => {
     });
   }
 };
-
-// Delete room
-export const deleteRoom = async (req, res) => {
+// PATCH /api/rooms/:id/status
+export const updateRoomStatus = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
-
-    if (!room)
-      return res.status(404).json({ message: "Room not found to delete." });
-
-    // check authentication
-    if (room.landlordID.toString() !== req.user.id) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to delete this room." });
+    if (!room) {
+      return res.status(404).json({ message: "Room not found." });
     }
 
-    await room.deleteOne();
+    // Check authorization
+    if (room.landlordID.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized." });
+    }
 
-    res.json({ message: "Room deleted successfully." });
-  } catch (error) {
-    console.error("Error deleting room:", error);
+    const { status } = req.body;
+
+    // Validate status
+    const allowedStatuses = ["available", "rented", "disabled"];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value." });
+    }
+
+    // switch to disabled → check if there are any active contracts
+    if (status === "disabled") {
+      const activeContract = await Contract.findOne({
+        roomId: room._id,
+        status: "active",
+      });
+
+      if (activeContract) {
+        return res.status(400).json({
+          message: "Cannot disable room with an active contract.",
+        });
+      }
+    }
+
+    // Restore: switch from disable → available
+    if (room.status === "disabled" && status !== "disabled") {
+      room.status = status;
+      await room.save();
+      return res.json({
+        message: `Room restored to status "${status}"`,
+        room,
+      });
+    }
+
+    // switch from available → disabled
+    room.status = status;
+    await room.save();
+
+    res.json({
+      message: `Room status updated to "${status}"`,
+      room,
+    });
+  } catch (err) {
+    console.error("❌ Error updating room status:", err);
     res.status(500).json({
-      message: "Server error while deleting room.",
+      message: "Server error while updating room status.",
+      error: err.message,
     });
   }
 };

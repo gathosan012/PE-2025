@@ -1,6 +1,7 @@
 import Room from "../models/Room.model.js";
 import Service from "../models/Service.model.js";
 import Contract from "../models/Contract.model.js";
+import cron from "node-cron";
 export const createContract = async (req, res) => {
   try {
     const {
@@ -41,6 +42,9 @@ export const createContract = async (req, res) => {
       serviceIds, // Auto-injected
     });
     await newContract.save();
+    if (status === "active") {
+      await Room.findByIdAndUpdate(roomId, { status: "rented" });
+    }
 
     res.status(201).json({
       success: true,
@@ -97,6 +101,21 @@ export const updateContract = async (req, res) => {
     );
     if (!updatedContract) {
       return res.status(404).json({ message: "Contract not found." });
+    }
+    //if change status of contract, change status of room
+    if (req.body.status) {
+      const stillActive = await Contract.findOne({
+        roomId: updatedContract.roomId,
+        status: "active",
+        _id: { $ne: updatedContract._id }, // tránh chính nó
+      });
+
+      const newStatus =
+        req.body.status === "active" || stillActive ? "rented" : "available";
+
+      await Room.findByIdAndUpdate(updatedContract.roomId, {
+        status: newStatus,
+      });
     }
 
     res.json({
