@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styling/components/AddCustomerForm.scss";
 import SidePanel from "../components/SidePanel";
 import axios from "axios";
 
 const AddCustomerForm = () => {
-  const { roomId } = useParams();
+  const { roomId, contractId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("information");
-
+  const [tenantId, setTenantId] = useState(null);
   const [formData, setFormData] = useState({
     fullname: "",
     birthday: "",
@@ -30,7 +30,7 @@ const AddCustomerForm = () => {
     navigate("/rooms");
   };
 
-  const handleChange = (e) => {
+  const handleChangeTenant = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -38,33 +38,239 @@ const AddCustomerForm = () => {
     }));
   };
 
-  const handleSave = async (e) => {
+  const handleSaveTenant = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        alert("You need to log in first.");
+      }
+
       const response = await axios.post(
-        "http://localhost:5000/api/tenant",
-        formData
+        "http://localhost:5000/api/tenant/add",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.success) {
-        navigate("/rooms");
+        alert("Tenant added successfully!");
+        //navigate("/rooms");
+        setTenantId(response.data.tenant._id);
+        setActiveTab("contract");
       } else {
         alert("Save failed: " + response.data.message);
       }
     } catch (error) {
       if (error.response && error.response.data) {
-        alert("Error: " + error.response.data.message);
+        console.error("Error from server:", error.response.data);
+        alert("Error: " + JSON.stringify(error.response.data));
       } else {
         alert("Unknown error occurred.");
       }
     }
   };
+  const [contractData, setContractData] = useState({
+    startDate: "",
+    endDate: "",
+    monthlyFee: "",
+    deposit: "",
+    payPer: "1",
+  });
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("authToken");
 
+      if (!token) return;
+
+      try {
+        if (contractId) {
+          // Fetch contract (đã bao gồm tenant)
+          const res = await axios.get(
+            `http://localhost:5000/api/contracts/${contractId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          const contract = res.data;
+
+          // Gán dữ liệu hợp đồng
+          setContractData({
+            startDate: contract.startDate?.split("T")[0],
+            endDate: contract.endDate?.split("T")[0],
+            monthlyFee: contract.monthlyFee,
+            deposit: contract.deposit,
+            payPer: contract.payPer,
+          });
+
+          // Gán dữ liệu tenant
+          if (contract.tenantId) {
+            const t = contract.tenantId;
+            setFormData({
+              fullname: t.fullname || "",
+              birthday: t.birthday?.split("T")[0] || "",
+              CIDNumber: t.CIDNumber || "",
+              sex: t.sex || "",
+              phone1: t.phone1 || "",
+              phone2: t.phone2 || "",
+              email: t.email || "",
+              birthPlace: t.birthPlace || "",
+              CIDIssuedDate: t.CIDIssuedDate?.split("T")[0] || "",
+              CIDIssuedPlace: t.CIDIssuedPlace || "",
+              province: t.province || "",
+              vehicleNumber: t.vehicleNumber || "",
+              permanentAddress: t.permanentAddress || "",
+              note: t.note || "",
+            });
+          }
+        } else {
+          // Nếu chưa có contract thì lấy giá phòng
+          const res = await axios.get(
+            `http://localhost:5000/api/rooms/${roomId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (res.data.price) {
+            setContractData((prev) => ({
+              ...prev,
+              monthlyFee: res.data.price,
+            }));
+          }
+        }
+      } catch (err) {
+        console.error("❌ Error loading data:", err);
+      }
+    };
+
+    if (roomId) {
+      fetchData();
+    }
+  }, [roomId, contractId]);
+
+  const handleChangeContract = (e) => {
+    const { name, value } = e.target;
+    setContractData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  const handleSaveContract = async () => {
+    if (!tenantId) {
+      alert("Tenant ID missing. Please save tenant first.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("authToken");
+      const contractPayload = {
+        roomId,
+        tenantId,
+        ...contractData,
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/api/contracts/add",
+        contractPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        alert("Contract saved successfully!");
+        navigate("/rooms");
+      } else {
+        alert("Failed to save contract.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving contract.");
+    }
+  };
+
+  const handleEndContract = async () => {
+    if (!contractId) return;
+
+    const confirm = window.confirm("Do you want to end this contract?");
+    if (!confirm) return;
+
+    try {
+      const token = localStorage.getItem("authToken");
+      const res = await axios.put(
+        `http://localhost:5000/api/contracts/${contractId}`,
+        { status: "terminated" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data.contract.status === "terminated") {
+        alert("This contract has been terminated.");
+        navigate("/rooms");
+      }
+    } catch (err) {
+      console.error("❌ Error ending contract:", err);
+      alert("Error ending contract.");
+    }
+  };
+  const handleUpdateTenant = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token || !contractId) return;
+
+      // lấy tenantId từ contract trước
+      const res = await axios.get(
+        `http://localhost:5000/api/contracts/${contractId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const tenantId = res.data.tenantId?._id;
+      if (!tenantId) {
+        alert("Tenant ID not found in contract.");
+        return;
+      }
+
+      const updateRes = await axios.put(
+        `http://localhost:5000/api/tenant/${tenantId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (updateRes.status === 200) {
+        alert("Tenant information updated successfully.");
+      }
+    } catch (err) {
+      console.error("❌ Error updating tenant:", err);
+      alert("Failed to update tenant.");
+    }
+  };
   return (
     <div className="page-layout">
       <SidePanel />
       <div className="page-content">
         <div className="page-wrapper">
-          <h2 className="page-title">New Tenant</h2>
+          <h2 className="page-title">
+            {contractId ? "View/Edit Tenant" : "New Tenant"}
+          </h2>
 
           {/* Tabs */}
           <div className="customer-tabs">
@@ -74,7 +280,7 @@ const AddCustomerForm = () => {
             {renderTab("contract", "Contract")}
           </div>
 
-          {/* Form content */}
+          {/* Form Information of Tenant */}
           <div className="c-form-tab">
             {activeTab === "information" && (
               <form className="c-form-container">
@@ -85,7 +291,7 @@ const AddCustomerForm = () => {
                       type="text"
                       name="fullname"
                       value={formData.fullname}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
 
@@ -95,7 +301,7 @@ const AddCustomerForm = () => {
                       type="date"
                       name="birthday"
                       value={formData.birthday}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
                 </div>
@@ -107,21 +313,21 @@ const AddCustomerForm = () => {
                       type="text"
                       name="birthPlace"
                       value={formData.birthPlace}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
 
                   <div className="c-form-group inline-radio">
-                    <label>Sex</label>
+                    <label>Sex *</label>
                     <label>
                       <input
                         type="radio"
                         name="sex"
                         value="Male"
                         checked={formData.sex === "Male"}
-                        onChange={handleChange}
+                        onChange={handleChangeTenant}
                       />{" "}
-                      Nam
+                      Male
                     </label>
                     <label>
                       <input
@@ -129,9 +335,9 @@ const AddCustomerForm = () => {
                         name="sex"
                         value="Female"
                         checked={formData.sex === "Female"}
-                        onChange={handleChange}
+                        onChange={handleChangeTenant}
                       />{" "}
-                      Nữ
+                      Female
                     </label>
                   </div>
                 </div>
@@ -143,7 +349,7 @@ const AddCustomerForm = () => {
                       type="text"
                       name="CIDNumber"
                       value={formData.CIDNumber}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
 
@@ -153,7 +359,7 @@ const AddCustomerForm = () => {
                       type="email"
                       name="email"
                       value={formData.email}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
                 </div>
@@ -165,7 +371,7 @@ const AddCustomerForm = () => {
                       type="date"
                       name="CIDIssuedDate"
                       value={formData.CIDIssuedDate}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
 
@@ -175,7 +381,7 @@ const AddCustomerForm = () => {
                       type="text"
                       name="phone1"
                       value={formData.phone1}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
                 </div>
@@ -187,7 +393,7 @@ const AddCustomerForm = () => {
                       type="text"
                       name="CIDIssuedPlace"
                       value={formData.CIDIssuedPlace}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
 
@@ -197,7 +403,7 @@ const AddCustomerForm = () => {
                       type="text"
                       name="phone2"
                       value={formData.phone2}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
                 </div>
@@ -208,7 +414,7 @@ const AddCustomerForm = () => {
                     <select
                       name="province"
                       value={formData.province}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     >
                       <option value="">-- Select --</option>
                       <option value="Hà Nội">Hà Nội</option>
@@ -222,7 +428,7 @@ const AddCustomerForm = () => {
                       type="text"
                       name="permanentAddress"
                       value={formData.permanentAddress}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
                 </div>
@@ -234,7 +440,7 @@ const AddCustomerForm = () => {
                       type="text"
                       name="vehicleNumber"
                       value={formData.vehicleNumber}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     />
                   </div>
                 </div>
@@ -248,7 +454,7 @@ const AddCustomerForm = () => {
                     <textarea
                       name="note"
                       value={formData.note}
-                      onChange={handleChange}
+                      onChange={handleChangeTenant}
                     ></textarea>
                   </div>
                 </div>
@@ -261,20 +467,127 @@ const AddCustomerForm = () => {
                   >
                     Back
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleSave}
-                    style={{ backgroundColor: "#5cb85c" }}
-                  >
-                    Save
-                  </button>
+                  {!contractId ? (
+                    <button
+                      type="button"
+                      onClick={handleSaveTenant}
+                      style={{ backgroundColor: "#5cb85c" }}
+                    >
+                      Save
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleUpdateTenant}
+                      style={{ backgroundColor: "#0275d8" }}
+                    >
+                      Update
+                    </button>
+                  )}
+                </div>
+              </form>
+            )}
+            {activeTab === "contract" && (
+              <form className="c-form-container">
+                <div className="c-form-row">
+                  <div className="c-form-group">
+                    <label>Start Date *</label>
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={contractData.startDate}
+                      onChange={handleChangeContract}
+                      readOnly={!!contractId}
+                    />
+                  </div>
+
+                  <div className="c-form-group">
+                    <label>End Date *</label>
+                    <input
+                      type="date"
+                      name="endDate"
+                      value={contractData.endDate}
+                      onChange={handleChangeContract}
+                      readOnly={!!contractId}
+                    />
+                  </div>
+                </div>
+
+                <div className="c-form-row">
+                  <div className="c-form-group">
+                    <label>Monthly Fee</label>
+                    <input
+                      type="number"
+                      name="monthlyFee"
+                      value={contractData.monthlyFee}
+                      readOnly
+                    />
+                  </div>
+
+                  <div className="c-form-group">
+                    <label>Deposit *</label>
+                    <input
+                      type="number"
+                      name="deposit"
+                      value={contractData.deposit}
+                      onChange={handleChangeContract}
+                      readOnly={!!contractId}
+                    />
+                  </div>
+                </div>
+
+                <div className="c-form-row">
+                  <div className="c-form-group">
+                    <label>Pay per</label>
+                    <select
+                      name="payPer"
+                      value={contractData.payPer}
+                      onChange={handleChangeContract}
+                      disabled={!!contractId}
+                    >
+                      <option value="1">1 month</option>
+                      <option value="2">2 months</option>
+                      <option value="3">3 months</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="c-form-actions">
+                  {contractId ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        style={{
+                          backgroundColor: "#f0ad4e",
+                          marginRight: "10px",
+                        }}
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleEndContract}
+                        style={{ backgroundColor: "#d9534f" }}
+                      >
+                        End
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSaveContract}
+                      style={{ backgroundColor: "#5cb85c" }}
+                    >
+                      Save
+                    </button>
+                  )}
                 </div>
               </form>
             )}
 
-            {activeTab !== "information" && (
-              <p>[{activeTab}] Đang phát triển...</p>
-            )}
+            {activeTab === "service" && <p>[Service] Implementing...</p>}
+            {activeTab === "member" && <p>[Member] Implementing...</p>}
           </div>
         </div>
       </div>

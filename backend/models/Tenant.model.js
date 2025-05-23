@@ -22,5 +22,5 @@ const customerSchema = new mongoose.Schema(
   }
 );
 
-const Customer = mongoose.model("Customer", customerSchema);
-export default Customer;
+const Tenant = mongoose.model("Tenant", customerSchema, "customers");
+export default Tenant;

@@ -38,6 +38,7 @@ const router = createBrowserRouter([
   },
   { path: "/rooms/edit/:id", element: <EditRoomForm /> },
   { path: "/add-customer/:roomId", element: <AddCustomerForm /> },
+  { path: "/add-customer/:roomId/:contractId", element: <AddCustomerForm /> },
   { path: "/service", element: <Service /> },
   { path: "/service/edit", element: <ServiceForm /> },
   {
