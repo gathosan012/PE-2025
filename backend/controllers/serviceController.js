@@ -1,9 +1,9 @@
 import Service from '../models/Service.model.js'
-import Service from '../models/Service.model.js'
 
 export const createServiceController = async(request,response)=>{
     try {
         const {name, price, type, description} = request.body 
+        const landlordId = request.user?.id;
 
         if(!name || !price || !type ){
             return response.status(400).json({
@@ -13,16 +13,25 @@ export const createServiceController = async(request,response)=>{
             })
         }
 
-        const Service = new Service({
+        if(!landlordId){
+            return response.json({
+                message: "Landlord id missing from request",
+                error: true,
+                success: false
+            })
+        }
+
+        const newService = new Service({
             name ,
             price,
             type,
-            description
+            description,
+            landlordId
         })
-        const saveService = await Service.save()
+        const saveService = await newService.save()
 
         return response.json({
-            message : "Product Created Successfully",
+            message : "Service Created Successfully",
             data : saveService,
             error : false,
             success : true
@@ -41,11 +50,26 @@ export const getServiceDetails = async(request,response)=>{
     try {
         const { serviceId } = request.body 
 
-        const service = await Service.findOne({ _id : serviceId })
+        if (!serviceId) {
+            return response.status(400).json({
+                message: "Service ID is required",
+                error: true,
+                success: false
+            })
+        }
 
+        const service = await Service.findById({serviceId })
+
+        if (!service){
+            return response.status(404).json({
+                message: "service not found",
+                error: true,
+                success: false
+            })
+        }
 
         return response.json({
-            message : "service details",
+            message : "service details retrieved",
             data : service,
             error : false,
             success : true
@@ -62,7 +86,7 @@ export const getServiceDetails = async(request,response)=>{
 
 export const updateServiceDetails = async(request,response)=>{
     try {
-        const { _id } = request.body 
+        const { _id, ...updateFields } = request.body 
 
         if(!_id){
             return response.status(400).json({
@@ -72,9 +96,15 @@ export const updateServiceDetails = async(request,response)=>{
             })
         }
 
-        const updateService = await Service.updateOne({ _id : _id },{
-            ...request.body
-        })
+        const updateService = await Service.findByIdAndUpdate({ _id, updateFields})
+
+        if (!updateService) {
+            return response.status(404).json({
+                message: "Service not found",
+                error: true,
+                success: false        
+            })
+        }
 
         return response.json({
             message : "updated successfully",
@@ -82,6 +112,8 @@ export const updateServiceDetails = async(request,response)=>{
             error : false,
             success : true
         })
+
+
 
     } catch (error) {
         return response.status(500).json({
@@ -104,7 +136,15 @@ export const deleteServiceDetails = async(request,response)=>{
             })
         }
 
-        const deleteService = await Service.deleteOne({_id : _id })
+        const deleteService = await Service.findOneAndDelete({_id})
+
+        if (!deletedService) {
+        return response.status(404).json({
+            message: "Service not found",
+            error: true,
+            success: false,
+        });
+        }
 
         return response.json({
             message : "Delete successfully",
