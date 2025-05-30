@@ -10,12 +10,12 @@ const serviceSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
     description: { type: String },
   },
   {
     timestamps: true,
-  }
+  },
+
 );
 
 const Service = mongoose.model("Service", serviceSchema);
