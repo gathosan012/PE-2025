@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styling/room.scss";
 
 import SidePanel from "../components/SidePanel";
-import MainLayout from "../components/MainLayout";
+// import MainLayout from "../components/MainLayout";
 import AddRoomForm from "../components/AddRoomForm";
 import EditRoomForm from "../components/EditRoomForm";
 import "../styling/components/AddRoomForm.scss";

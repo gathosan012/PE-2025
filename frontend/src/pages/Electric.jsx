@@ -35,9 +35,9 @@ function Electric() {
       <div className="electric-content">
         <div className="electric-inner">
           <div className="electric-upper">
-            <h1 className="service-title">Chỉ số điện</h1>
+            <h1 className="service-title">Electricity Index</h1>
             <button className="search-btn">
-              <FaSearch className="icon"></FaSearch>Xem
+              <FaSearch className="icon"></FaSearch>View
             </button>
           </div>
           <div className="break"></div>
@@ -57,11 +57,11 @@ function Electric() {
             >
               <thead>
                 <tr>
-                  <th>Phòng</th>
-                  <th>Khách thuê</th>
-                  <th>CS Điện Cũ</th>
-                  <th>CS Điện Mới</th>
-                  <th>Sử dụng</th>
+                  <th>Room</th>
+                  <th>Renter</th>
+                  <th>Previous Electricity Rate</th>
+                  <th>Current Electricity Rate</th>
+                  <th>Consumed</th>
                   <th></th>
                 </tr>
               </thead>
@@ -104,7 +104,7 @@ function Electric() {
                             borderRadius: "5px",
                           }}
                         >
-                          💾 Lưu
+                          💾 Save
                         </button>
                       </td>
                     </tr>

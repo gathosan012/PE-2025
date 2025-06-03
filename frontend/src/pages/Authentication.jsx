@@ -12,16 +12,16 @@ function Authentication() {
       if(status == "signin"){
           return(
               <>
-                <span className='redirect-link' onClick={() => setStatus("signup")}>Đăng kí tài khoản mới</span>
-                <button className='submit'>Đăng Nhập</button>
+                <span className='redirect-link' onClick={() => setStatus("signup")}>Create an account</span>
+                <button className='submit'>Sign In</button>
               </>
           )
       }
       else if(status == "signup"){
           return(
             <>
-              <span className='redirect-link' onClick={() => setStatus("signin")}>Đã có tài khoản</span>
-              <button className='submit'>Đăng Ký</button>
+              <span className='redirect-link' onClick={() => setStatus("signin")}>Already signed up?</span>
+              <button className='submit'>Register</button>
             </>
           )
       }
