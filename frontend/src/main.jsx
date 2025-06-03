@@ -14,8 +14,14 @@ import ServiceForm from "./pages/ServiceForm";
 import AddCustomerForm from "./components/AddCustomerForm";
 import Electric from "./pages/Electric.jsx";
 import Water from "./pages/Water.jsx";
+import Welcome from "./pages/Welcome.jsx";
+
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Welcome />
+  },
   {
     path: "/login",
     element: <SignIn />,
