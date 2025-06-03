@@ -1,43 +1,146 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SidePanel from "../components/SidePanel";
 import "../styling/electric.scss";
 import { FaSearch } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import DateField from "../components/DateField";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Electric() {
   const [selectedDate, setSelectedDate] = useState(null);
-  const [data, setData] = useState([
-    { room: 1, user: "Nghia", old: 0, new: 0 },
-    { room: 2, user: "Duy", old: 0, new: 0 },
-    { room: 3, user: "Tuan", old: 0, new: 0 },
-    { room: 4, user: "Lan", old: 0, new: 0 },
-    { room: 5, user: "Tran", old: 0, new: 0 },
-  ]);
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
-  const handleInputChange = (index, field, value) => {
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("authToken");
+
+    if (!user || user.role !== "landlord" || !token) {
+      alert("Access denied. Only landlord can access this page.");
+      navigate("/login");
+      return;
+    }
+
+    fetchCurrentMonthData();
+  }, []);
+
+  const handleInputChange = (index, value) => {
     const newData = [...data];
-    newData[index][field] = parseFloat(value) || 0;
+    newData[index].new = parseFloat(value) || 0;
     setData(newData);
   };
 
-  const handleSave = (index) => {
+  const handleSave = async (index) => {
+    const token = localStorage.getItem("authToken");
     const entry = data[index];
-    const usage = entry.new - entry.old;
-    alert(`Saved Room ${entry.room}, Usage: ${usage} kWh`);
-    // Post to backend here
+
+    if (entry.new < entry.old) {
+      alert(
+        "New reading must be greater than or equal to the previous reading."
+      );
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:5000/api/electric-meters/add-new-meters",
+        {
+          contract_id: entry.contract_id,
+          currentIndex: entry.new,
+          recordDate: new Date().toISOString(),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      alert("\uD83D\uDCBE Saved successfully!");
+      fetchCurrentMonthData();
+    } catch (err) {
+      console.error("Failed to save electric reading", err);
+      alert("Save failed.");
+    }
+  };
+
+  const fetchCurrentMonthData = () => {
+    const token = localStorage.getItem("authToken");
+
+    axios
+      .get("http://localhost:5000/api/electric-meters/index", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        console.log("API electric-meters/index response:", res.data);
+        if (!Array.isArray(res.data)) {
+          alert("⚠️ Unexpected data format");
+          return;
+        }
+
+        const transformed = res.data.map((item) => ({
+          contract_id: item.contract_id,
+          room: item.room.roomNumber,
+          user: item.tenant.fullname,
+          old: item.lastElectricIndex,
+          new: item.currentIndex ?? "",
+          consumed: item.consumed ?? 0,
+        }));
+        setData(transformed);
+      })
+      .catch((err) => {
+        console.error("Error fetching electric data", err);
+      });
+  };
+
+  const now = new Date();
+  const isCurrentMonth = selectedDate
+    ? selectedDate.getMonth() === now.getMonth() &&
+      selectedDate.getFullYear() === now.getFullYear()
+    : true;
+
+  const handleFilter = () => {
+    const token = localStorage.getItem("authToken");
+    if (!selectedDate) {
+      alert("Please select a date to filter.");
+      return;
+    }
+
+    const month = selectedDate.getMonth() + 1;
+    const year = selectedDate.getFullYear();
+
+    axios
+      .get(
+        `http://localhost:5000/api/electric-meters/history?month=${month}&year=${year}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then((res) => {
+        const filteredData = res.data.map((item) => ({
+          contract_id: item.contract_id._id,
+          room: item.contract_id.roomId.roomNumber,
+          user: item.contract_id.tenantId.fullname,
+          old: item.previousIndex,
+          new: item.currentIndex,
+        }));
+        setData(filteredData);
+      })
+      .catch((err) => {
+        console.error("Error fetching electric meter history:", err);
+        alert("Failed to load history.");
+      });
   };
 
   return (
     <div className="electric-container">
-      <SidePanel selected="electric"></SidePanel>
+      <SidePanel selected="electric" />
       <div className="electric-content">
         <div className="electric-inner">
           <div className="electric-upper">
             <h1 className="service-title">Chỉ số điện</h1>
-            <button className="search-btn">
-              <FaSearch className="icon"></FaSearch>Xem
+            <button className="search-btn" onClick={handleFilter}>
+              <FaSearch className="icon" />
+              Xem
             </button>
           </div>
           <div className="break"></div>
@@ -46,7 +149,7 @@ function Electric() {
               <DateField
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
-              ></DateField>
+              />
             </div>
             <table
               style={{
@@ -76,9 +179,7 @@ function Electric() {
                         <input
                           type="number"
                           value={entry.old}
-                          onChange={(e) =>
-                            handleInputChange(index, "old", e.target.value)
-                          }
+                          disabled
                           style={{ width: "60px" }}
                         />
                       </td>
@@ -87,25 +188,30 @@ function Electric() {
                           type="number"
                           value={entry.new}
                           onChange={(e) =>
-                            handleInputChange(index, "new", e.target.value)
+                            handleInputChange(index, e.target.value)
                           }
+                          disabled={!isCurrentMonth}
                           style={{ width: "60px" }}
                         />
                       </td>
-                      <td className="final-usage">{usage.toFixed(1)}</td>
+                      <td className="final-usage">
+                        {entry.consumed?.toFixed(1) || 0}
+                      </td>
                       <td>
-                        <button
-                          onClick={() => handleSave(index)}
-                          style={{
-                            backgroundColor: "#4FC3F7",
-                            color: "white",
-                            border: "none",
-                            padding: "5px 10px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          💾 Lưu
-                        </button>
+                        {isCurrentMonth && (
+                          <button
+                            onClick={() => handleSave(index)}
+                            style={{
+                              backgroundColor: "#4FC3F7",
+                              color: "white",
+                              border: "none",
+                              padding: "5px 10px",
+                              borderRadius: "5px",
+                            }}
+                          >
+                            💾 Lưu
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
