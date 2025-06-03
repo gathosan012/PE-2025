@@ -16,7 +16,6 @@ const AddRoomForm = ({ onSuccess }) => {
     allowMale: true,
     allowFemale: true,
     description: "",
-    image: null,
   });
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
@@ -47,11 +46,18 @@ const AddRoomForm = ({ onSuccess }) => {
     if (image) form.append("image", image); //add image file
 
     try {
-      //const token = localStorage.getItem("token"); // Get token from localStorage
+      const token = localStorage.getItem("authToken");
+      console.log("Token from localStorage:", token);
+      console.log("Token sent:", token); // Kiểm tra token
+
+      if (!token) {
+        alert("You are not logged in or token missing!");
+        return;
+      }
+
       const res = await axios.post("http://localhost:5000/api/rooms", form, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          //Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -91,13 +97,12 @@ const AddRoomForm = ({ onSuccess }) => {
                 />
               </div>
               <div className="form-group">
-                <label>Length *</label>
+                <label>Length </label>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     name="length"
                     value={formData.length}
                     onChange={handleChange}
-                    required
                   />
                   <span style={{ marginLeft: "8px" }}>M</span>
                 </div>
@@ -129,13 +134,12 @@ const AddRoomForm = ({ onSuccess }) => {
                 </div>
               </div>
               <div className="form-group">
-                <label>Width *</label>
+                <label>Width </label>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     name="width"
                     value={formData.width}
                     onChange={handleChange}
-                    required
                   />
                   <span style={{ marginLeft: "8px" }}>M</span>
                 </div>
@@ -198,12 +202,13 @@ const AddRoomForm = ({ onSuccess }) => {
             style={{ flexDirection: "column" }}
           >
             <div className="form-group">
-              <label>Address </label>
+              <label>Address *</label>
               <textarea
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 rows={1}
+                required
               />
             </div>
             <div className="form-group">

@@ -28,14 +28,13 @@ function Authentication() {
   }
 
 
+function Authentication({ mode = "signin" }) {
   return (
-    <div className='auth-container'>
-        <div className='background-container'></div>
-        {
-            status === "signin" ? <SignIn text={<Text status="signin"></Text>}></SignIn> : <SignUp text={<Text status="signup"></Text>}></SignUp>
-        }
+    <div className="auth-container">
+      <div className="background-container"></div>
+      {mode === "signin" ? <SignIn /> : <SignUp />}
     </div>
-  )
+  );
 }
 
-export default Authentication
+export default Authentication;
