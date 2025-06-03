@@ -139,9 +139,8 @@ function Water() {
         <div className="water-inner">
           <div className="water-upper">
             <h1 className="service-title">Electricity Index</h1>
-            <button className="search-btn">
-              <FaSearch className="icon"></FaSearch>View
-            </button>
+            <button className="search-btn" onClick={handleFilter}>
+              <FaSearch className="icon"></FaSearch>View</button>
           </div>
           <div className="break"></div>
           <div className="water-lower">

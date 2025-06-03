@@ -138,7 +138,7 @@ function Electric() {
         <div className="electric-inner">
           <div className="electric-upper">
             <h1 className="service-title">Electricity Index</h1>
-            <button className="search-btn">
+            <button className="search-btn" onClick={handleFilter}>
               <FaSearch className="icon"></FaSearch>View
             </button>
           </div>
