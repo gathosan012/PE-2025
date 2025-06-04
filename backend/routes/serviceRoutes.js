@@ -1,18 +1,47 @@
-import { Router } from 'express'
-import authorizeAdmin, { authorizeLandlord } from '../middleware/authMiddleware.js'
-import { createServiceController, getServiceDetails, updateServiceDetails, deleteServiceDetails } from '../controllers/serviceController.js'
+import { Router } from "express";
+import {
+  authenticateToken,
+  authorizeLandlord,
+} from "../middleware/authMiddleware.js";
+import {
+  createService,
+  getAllServices,
+  getServiceById,
+  updateService,
+  deleteService,
+} from "../controllers/serviceController.js";
 
+const serviceRouter = Router();
 
-const serviceRouter = Router()
+serviceRouter.post(
+  "/create-service",
+  authenticateToken,
+  authorizeLandlord,
+  createService
+);
+serviceRouter.get(
+  "/list-services",
+  authenticateToken,
+  authorizeLandlord,
+  getAllServices
+);
+serviceRouter.get(
+  "/service/:id",
+  authenticateToken,
+  authorizeLandlord,
+  getServiceById
+);
+serviceRouter.put(
+  "/update-service/:id",
+  authenticateToken,
+  authorizeLandlord,
+  updateService
+);
+serviceRouter.delete(
+  "/delete-service/:id",
+  authenticateToken,
+  authorizeLandlord,
+  deleteService
+);
 
-serviceRouter.post("/create",authorizeLandlord,createServiceController)
-serviceRouter.post('/get',getServiceDetails)
-
-//update service
-serviceRouter.put('/update-service-details',authorizeLandlord, updateServiceDetails)
-
-//delete service
-serviceRouter.delete('/delete-service',authorizeLandlord, deleteServiceDetails)
-
-
-export default serviceRouter
+export default serviceRouter;
