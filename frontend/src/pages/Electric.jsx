@@ -137,10 +137,9 @@ function Electric() {
       <div className="electric-content">
         <div className="electric-inner">
           <div className="electric-upper">
-            <h1 className="service-title">Chỉ số điện</h1>
+            <h1 className="service-title">Electricity Index</h1>
             <button className="search-btn" onClick={handleFilter}>
-              <FaSearch className="icon" />
-              Xem
+              <FaSearch className="icon"></FaSearch>View
             </button>
           </div>
           <div className="break"></div>
@@ -160,11 +159,11 @@ function Electric() {
             >
               <thead>
                 <tr>
-                  <th>Phòng</th>
-                  <th>Khách thuê</th>
-                  <th>CS Điện Cũ</th>
-                  <th>CS Điện Mới</th>
-                  <th>Sử dụng</th>
+                  <th>Room</th>
+                  <th>Renter</th>
+                  <th>Previous Electricity Rate</th>
+                  <th>Current Electricity Rate</th>
+                  <th>Consumed</th>
                   <th></th>
                 </tr>
               </thead>
@@ -198,20 +197,18 @@ function Electric() {
                         {entry.consumed?.toFixed(1) || 0}
                       </td>
                       <td>
-                        {isCurrentMonth && (
-                          <button
-                            onClick={() => handleSave(index)}
-                            style={{
-                              backgroundColor: "#4FC3F7",
-                              color: "white",
-                              border: "none",
-                              padding: "5px 10px",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            💾 Lưu
-                          </button>
-                        )}
+                        <button
+                          onClick={() => handleSave(index)}
+                          style={{
+                            backgroundColor: "#4FC3F7",
+                            color: "white",
+                            border: "none",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          💾 Save
+                        </button>
                       </td>
                     </tr>
                   );

@@ -138,11 +138,9 @@ function Water() {
       <div className="water-content">
         <div className="water-inner">
           <div className="water-upper">
-            <h1 className="service-title">Chỉ số nước</h1>
+            <h1 className="service-title">Electricity Index</h1>
             <button className="search-btn" onClick={handleFilter}>
-              <FaSearch className="icon" />
-              Xem
-            </button>
+              <FaSearch className="icon"></FaSearch>View</button>
           </div>
           <div className="break"></div>
           <div className="water-lower">
@@ -161,11 +159,11 @@ function Water() {
             >
               <thead>
                 <tr>
-                  <th>Phòng</th>
-                  <th>Khách thuê</th>
-                  <th>CS nước Cũ</th>
-                  <th>CS nước Mới</th>
-                  <th>Sử dụng</th>
+                  <th>Room</th>
+                  <th>Renter</th>
+                  <th>Previous Water Rate</th>
+                  <th>Current Water Rate</th>
+                  <th>Consumed</th>
                   <th></th>
                 </tr>
               </thead>
@@ -199,20 +197,18 @@ function Water() {
                         {entry.consumed?.toFixed(1) || 0}
                       </td>
                       <td>
-                        {isCurrentMonth && (
-                          <button
-                            onClick={() => handleSave(index)}
-                            style={{
-                              backgroundColor: "#4FC3F7",
-                              color: "white",
-                              border: "none",
-                              padding: "5px 10px",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            💾 Lưu
-                          </button>
-                        )}
+                        <button
+                          onClick={() => handleSave(index)}
+                          style={{
+                            backgroundColor: "#4FC3F7",
+                            color: "white",
+                            border: "none",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          💾 Save
+                        </button>
                       </td>
                     </tr>
                   );
