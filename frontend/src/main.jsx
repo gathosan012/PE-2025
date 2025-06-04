@@ -15,6 +15,7 @@ import AddCustomerForm from "./components/AddCustomerForm";
 import Electric from "./pages/Electric.jsx";
 import Water from "./pages/Water.jsx";
 import Welcome from "./pages/Welcome.jsx";
+import Customer from "./pages/Customer.jsx";
 
 
 const router = createBrowserRouter([
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
   {
     path: "/water",
     element: <Water />,
+  },
+  {
+    path: "/customer",
+    element: <Customer />,
   },
 ]);
 

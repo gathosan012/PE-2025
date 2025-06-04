@@ -12,18 +12,18 @@ function Electric() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("authToken");
+  // useEffect(() => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //   const token = localStorage.getItem("authToken");
 
-    if (!user || user.role !== "landlord" || !token) {
-      alert("Access denied. Only landlord can access this page.");
-      navigate("/login");
-      return;
-    }
+  //   if (!user || user.role !== "landlord" || !token) {
+  //     alert("Access denied. Only landlord can access this page.");
+  //     navigate("/login");
+  //     return;
+  //   }
 
-    fetchCurrentMonthData();
-  }, []);
+  //   fetchCurrentMonthData();
+  // }, []);
 
   const handleInputChange = (index, value) => {
     const newData = [...data];
@@ -137,7 +137,7 @@ function Electric() {
       <div className="electric-content">
         <div className="electric-inner">
           <div className="electric-upper">
-            <h1 className="service-title">Electricity Index</h1>
+            <h1 className="service-title">Electricity Meter</h1>
             <button className="search-btn" onClick={handleFilter}>
               <FaSearch className="icon"></FaSearch>View
             </button>
