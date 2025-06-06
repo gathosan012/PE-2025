@@ -1,18 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styling/components/ServiceForm.scss";
-import { useNavigate } from "react-router-dom";
 
 function ServiceForm({
   title = "Add Service",
   initialData = { name: "", type: "", price: 0, active: true, note: "" },
   onSubmit,
-  onCancel,
   toggleStatus,
   toggleFunction,
 }) {
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    setFormData((prev) => {
+      if (JSON.stringify(prev) !== JSON.stringify(initialData)) {
+        return initialData;
+      }
+      return prev;
+    });
+  }, [initialData]);
 
   const validate = () => {
     const newErrors = {};
@@ -43,7 +49,6 @@ function ServiceForm({
       <h2 className="edit-form-title">{title}</h2>
 
       <div className="edit-form-grid">
-        {/* Name */}
         <div className="edit-form-group">
           <label className="service-label">Name *</label>
           <input
@@ -55,7 +60,6 @@ function ServiceForm({
           {errors.name && <p className="error">{errors.name}</p>}
         </div>
 
-        {/* Type */}
         <div className="edit-form-group">
           <label className="service-label">Type *</label>
           <select
@@ -72,7 +76,6 @@ function ServiceForm({
           {errors.type && <p className="error">{errors.type}</p>}
         </div>
 
-        {/* Price */}
         <div className="edit-form-group">
           <label className="service-label">Price *</label>
           <div className="flex items-center">
@@ -88,7 +91,6 @@ function ServiceForm({
           {errors.price && <p className="error">{errors.price}</p>}
         </div>
 
-        {/* Active checkbox */}
         <div className="edit-form-group">
           <label className="label-inline">
             <input
@@ -102,7 +104,6 @@ function ServiceForm({
           </label>
         </div>
 
-        {/* Note */}
         <div className="edit-form-group full-row">
           <label className="service-label">Note</label>
           <textarea
@@ -124,13 +125,10 @@ function ServiceForm({
               toggleFunction(!toggleStatus);
             }}
           >
-            ⬅ Back
+            Back
           </button>
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-          >
-            ✅ Save
+          <button className="btn-save" type="submit">
+            Save
           </button>
         </div>
       </div>

@@ -3,7 +3,7 @@ import "../styling/components/ServiceTable.scss";
 export default function ServiceTable({
   services,
   onEdit,
-  onToggleStatus, // 👈 đổi tên cho đúng logic
+  onToggleStatus,
   onSoftDelete,
 }) {
   return (
@@ -26,8 +26,8 @@ export default function ServiceTable({
             <td className="p-2 text-center">
               <input
                 type="checkbox"
-                checked={s.status === "active"} // 👈 kiểm tra theo status
-                onChange={() => onToggleStatus(s._id, s.status)} // 👈 gọi đúng handler
+                checked={s.status === "active"}
+                onChange={() => onToggleStatus(s._id, s.status)}
               />
             </td>
             <td className="p-2 text-center space-x-2">

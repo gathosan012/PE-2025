@@ -10,6 +10,7 @@ export default function Service() {
   const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [editingService, setEditingService] = useState(null);
 
   const navigate = useNavigate();
 
@@ -19,8 +20,6 @@ export default function Service() {
       const response = await axios.get("http://localhost:5000/api/services", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      // chỉ ẩn deleted
       const filtered = (response.data.data || []).filter(
         (s) => s.status !== "deleted"
       );
@@ -31,27 +30,52 @@ export default function Service() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      const confirmed = window.confirm(
+        "You must be logged in to access this page. Do you want to log in now?"
+      );
+      if (confirmed) {
+        navigate("/login");
+      }
+      return;
+    }
+
     fetchServices();
   }, []);
 
-  const handleCreateService = async (data) => {
+  const handleAddService = async (data) => {
     try {
       const token = localStorage.getItem("authToken");
       await axios.post(
         "http://localhost:5000/api/services/create-service",
         { ...data, status: "active" },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchServices();
       setIsFormVisible(false);
     } catch (error) {
-      console.error("Error creating service:", error);
+      console.error("Error adding service:", error);
     }
   };
 
-  // toggle giữa active <-> inactive
+  const handleUpdateService = async (data) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.put(
+        `http://localhost:5000/api/services/update-service/${editingService._id}`,
+        data,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchServices();
+      setIsFormVisible(false);
+      setEditingService(null);
+    } catch (error) {
+      console.error("Error updating service:", error);
+    }
+  };
+
   const handleToggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     try {
@@ -67,7 +91,6 @@ export default function Service() {
     }
   };
 
-  // soft delete
   const handleSoftDelete = async (id) => {
     const confirmed = window.confirm(
       "Do you want to permanently hide this service?"
@@ -81,9 +104,23 @@ export default function Service() {
         { status: "deleted" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      fetchServices(); // không cần filter nữa, vì BE đã xử lý
+      fetchServices();
     } catch (error) {
       console.error("Error deleting service:", error);
+    }
+  };
+
+  const handleEditService = async (id) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.get(
+        `http://localhost:5000/api/services/service/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEditingService(response.data.data);
+      setIsFormVisible(true);
+    } catch (error) {
+      console.error("Failed to load service", error);
     }
   };
 
@@ -93,33 +130,48 @@ export default function Service() {
     >
       {isFormVisible && (
         <ServiceForm
-          onSubmit={handleCreateService}
+          title={editingService ? "Edit Service" : "Add Service"}
+          initialData={editingService || undefined}
+          onSubmit={editingService ? handleUpdateService : handleAddService}
           toggleStatus={isFormVisible}
-          toggleFunction={setIsFormVisible}
+          toggleFunction={(val) => {
+            setIsFormVisible(val);
+            if (!val) setEditingService(null);
+          }}
         />
       )}
+
       <SidePanel selected="service" />
       <div className="service-content">
         <div className="service-container">
           <div className="service-page">
-            <h1 className="service-title">Service List</h1>
-            <div className="actions">
+            <div className="service-title-block">
+              <h1 className="service-title">Service List</h1>
+              <p className="service-description">
+                Manage your services here. You can add, edit, or delete
+                services.
+              </p>
+            </div>
+
+            <div className="service-header">
+              <div className="service-search-bar">
+                <input
+                  type="text"
+                  placeholder="Search by service name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
               <button
                 className="add"
-                onClick={() => setIsFormVisible(!isFormVisible)}
+                onClick={() => {
+                  setEditingService(null); // Ensure blank form
+                  setIsFormVisible(true);
+                }}
               >
-                Add Service
+                New Service
               </button>
             </div>
-          </div>
-
-          <div className="service-search-bar">
-            <input
-              type="text"
-              placeholder="Search by service name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
           </div>
 
           <div className="service-table">
@@ -127,7 +179,7 @@ export default function Service() {
               services={services.filter((s) =>
                 s.name.toLowerCase().includes(searchTerm.toLowerCase())
               )}
-              onEdit={(id) => navigate(`/edit-service/${id}`)}
+              onEdit={handleEditService}
               onToggleStatus={handleToggleStatus}
               onSoftDelete={handleSoftDelete}
             />
