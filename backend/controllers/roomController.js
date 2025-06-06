@@ -250,3 +250,28 @@ export const updateRoomStatus = async (req, res) => {
     });
   }
 };
+
+//getRoomStatusSummary for chart
+export const getRoomStatusSummary = async (req, res) => {
+  try {
+    console.log("==[START]== Get Room Status Summary");
+    if (!req.user) {
+      console.log("⚠️ req.user is undefined");
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const landlordId = req.user.id;
+    console.log("✅ Logged-in landlordId:", landlordId);
+
+    const allRooms = await Room.find({ landlordID: landlordId });
+    console.log("📦 Rooms found:", allRooms.length);
+
+    const occupied = allRooms.filter((r) => r.status === "rented").length;
+    const available = allRooms.filter((r) => r.status === "available").length;
+
+    console.log("📊 Occupied:", occupied, "| Available:", available);
+    res.json({ occupied, available });
+  } catch (err) {
+    console.error("❌ Error fetching room status summary:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

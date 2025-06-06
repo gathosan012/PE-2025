@@ -53,7 +53,7 @@ function SidePanel({ selected }) {
         </Link>
         <Link
           to="/service"
-          className={selected === "services" ? "link active" : "link"}
+          className={selected === "service" ? "link active" : "link"}
         >
           <IoCube className="icon" />
           <span>Service</span>
