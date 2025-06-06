@@ -1,8 +1,9 @@
-import { Router } from "express";
+import express from "express";
 import {
   authenticateToken,
   authorizeLandlord,
 } from "../middleware/authMiddleware.js";
+
 import {
   createService,
   getAllServices,
@@ -11,37 +12,35 @@ import {
   deleteService,
 } from "../controllers/serviceController.js";
 
-const serviceRouter = Router();
+const serviceRoutes = express.Router();
 
-serviceRouter.post(
+serviceRoutes.get("/test", (req, res) => {
+  res.send("✅ Service route test works!");
+});
+serviceRoutes.post(
   "/create-service",
   authenticateToken,
   authorizeLandlord,
   createService
 );
-serviceRouter.get(
-  "/list-services",
-  authenticateToken,
-  authorizeLandlord,
-  getAllServices
-);
-serviceRouter.get(
+serviceRoutes.get("/", authenticateToken, authorizeLandlord, getAllServices);
+serviceRoutes.get(
   "/service/:id",
   authenticateToken,
   authorizeLandlord,
   getServiceById
 );
-serviceRouter.put(
+serviceRoutes.put(
   "/update-service/:id",
   authenticateToken,
   authorizeLandlord,
   updateService
 );
-serviceRouter.delete(
+serviceRoutes.delete(
   "/delete-service/:id",
   authenticateToken,
   authorizeLandlord,
   deleteService
 );
 
-export default serviceRouter;
+export default serviceRoutes;

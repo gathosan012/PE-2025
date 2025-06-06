@@ -1,6 +1,5 @@
 import Service from "../models/Service.model.js";
 
-// Create a new service
 export const createService = async (req, res) => {
   try {
     const { name, price, type, description } = req.body;
@@ -8,8 +7,8 @@ export const createService = async (req, res) => {
 
     if (!name || !price || !type) {
       return res.status(400).json({
-        message: "Please provide all required fields",
         success: false,
+        message: "Missing required fields (name, price, type).",
       });
     }
 
@@ -21,22 +20,44 @@ export const createService = async (req, res) => {
       landlordID,
     });
 
-    const savedService = await newService.save();
+    const saved = await newService.save();
 
     return res.status(201).json({
-      message: "Service created successfully.",
       success: true,
-      data: savedService,
+      message: "Service created successfully.",
+      data: saved,
     });
   } catch (error) {
     return res.status(500).json({
-      message: error.message || "Internal server error.",
       success: false,
+      message: error.message || "Internal server error.",
     });
   }
 };
 
-// Get a service by ID (only if owned by landlord)
+// ✅ Lấy toàn bộ dịch vụ theo landlord
+export const getAllServices = async (req, res) => {
+  try {
+    const landlordID = req.user?.id;
+    const services = await Service.find({
+      landlordID,
+      status: { $ne: "deleted" },
+    });
+
+    return res.json({
+      success: true,
+      message: "Fetched services successfully.",
+      data: services,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error.",
+    });
+  }
+};
+
+// ✅ Lấy 1 dịch vụ theo ID
 export const getServiceById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -46,77 +67,57 @@ export const getServiceById = async (req, res) => {
 
     if (!service) {
       return res.status(404).json({
-        message: "Service not found.",
         success: false,
+        message: "Service not found.",
       });
     }
 
     return res.json({
-      message: "Service retrieved successfully.",
       success: true,
       data: service,
     });
   } catch (error) {
     return res.status(500).json({
-      message: error.message || "Internal server error.",
       success: false,
+      message: error.message || "Internal server error.",
     });
   }
 };
 
-// Get all services by landlord
-export const getAllServices = async (req, res) => {
-  try {
-    const landlordID = req.user?.id;
-    const services = await Service.find({ landlordID });
-
-    return res.json({
-      message: "Services retrieved successfully.",
-      success: true,
-      data: services,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message || "Internal server error.",
-      success: false,
-    });
-  }
-};
-
-// Update a service (only if owned by landlord)
+// ✅ Cập nhật dịch vụ
 export const updateService = async (req, res) => {
   try {
     const { id } = req.params;
     const landlordID = req.user?.id;
     const updateData = req.body;
 
-    const service = await Service.findOneAndUpdate(
+    const updated = await Service.findOneAndUpdate(
       { _id: id, landlordID },
       updateData,
       { new: true }
     );
 
-    if (!service) {
+    if (!updated) {
       return res.status(404).json({
-        message: "Service not found or not owned by user.",
         success: false,
+        message: "Service not found or unauthorized.",
       });
     }
 
     return res.json({
-      message: "Service updated successfully.",
       success: true,
-      data: service,
+      message: "Service updated successfully.",
+      data: updated,
     });
   } catch (error) {
     return res.status(500).json({
-      message: error.message || "Internal server error.",
       success: false,
+      message: error.message || "Internal server error.",
     });
   }
 };
 
-// Delete a service (only if owned by landlord)
+// ✅ Xóa dịch vụ
 export const deleteService = async (req, res) => {
   try {
     const { id } = req.params;
@@ -126,20 +127,20 @@ export const deleteService = async (req, res) => {
 
     if (!deleted) {
       return res.status(404).json({
-        message: "Service not found or not owned by user.",
         success: false,
+        message: "Service not found or unauthorized.",
       });
     }
 
     return res.json({
-      message: "Service deleted successfully.",
       success: true,
+      message: "Service deleted successfully.",
       data: deleted,
     });
   } catch (error) {
     return res.status(500).json({
-      message: error.message || "Internal server error.",
       success: false,
+      message: error.message || "Internal server error.",
     });
   }
 };
