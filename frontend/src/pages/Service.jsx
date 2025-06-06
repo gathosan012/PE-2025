@@ -1,88 +1,135 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ServiceTable from "../components/ServiceTable";
 import "../styling/service.scss";
 import SidePanel from "../components/SidePanel";
 import ServiceForm from "./ServiceForm";
-
-const initialServices = [
-  { id: 1, name: "Điện", type: "ĐIỆN", price: 3000, active: true },
-  { id: 2, name: "Gửi xe máy", type: "KHÁC", price: 80000, active: true },
-  { id: 3, name: "Nước", type: "NƯỚC", price: 20000, active: true },
-  { id: 4, name: "Rác", type: "KHÁC", price: 50000, active: false },
-];
+import axios from "axios";
 
 export default function Service() {
-  const [services, setServices] = useState(initialServices);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [services, setServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isClicked, setIsClicked] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSelect = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
+  const fetchServices = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.get("http://localhost:5000/api/services", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-  const handleDeleteSelected = () => {
-    const confirmed = window.confirm("Xoá các dịch vụ đã chọn?");
-    if (confirmed) {
-      setServices(services.filter((s) => !selectedIds.includes(s.id)));
-      setSelectedIds([]);
+      // chỉ ẩn deleted
+      const filtered = (response.data.data || []).filter(
+        (s) => s.status !== "deleted"
+      );
+      setServices(filtered);
+    } catch (error) {
+      console.error("Error fetching services:", error);
     }
   };
 
-  const handleDelete = (id) => {
-    const confirmed = window.confirm("Xoá dịch vụ này?");
-    if (confirmed) {
-      setServices(services.filter((s) => s.id !== id));
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const handleCreateService = async (data) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.post(
+        "http://localhost:5000/api/services/create-service",
+        { ...data, status: "active" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchServices();
+      setIsFormVisible(false);
+    } catch (error) {
+      console.error("Error creating service:", error);
+    }
+  };
+
+  // toggle giữa active <-> inactive
+  const handleToggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.put(
+        `http://localhost:5000/api/services/update-service/${id}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchServices();
+    } catch (error) {
+      console.error("Error updating service status:", error);
+    }
+  };
+
+  // soft delete
+  const handleSoftDelete = async (id) => {
+    const confirmed = window.confirm(
+      "Do you want to permanently hide this service?"
+    );
+    if (!confirmed) return;
+
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.put(
+        `http://localhost:5000/api/services/update-service/${id}`,
+        { status: "deleted" },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchServices(); // không cần filter nữa, vì BE đã xử lý
+    } catch (error) {
+      console.error("Error deleting service:", error);
     }
   };
 
   return (
-    <div className={isClicked ? "service-wrapper toggled" : "service-wrapper"}>
-      {isClicked && (
+    <div
+      className={isFormVisible ? "service-wrapper toggled" : "service-wrapper"}
+    >
+      {isFormVisible && (
         <ServiceForm
-          toggleStatus={isClicked}
-          toggleFunction={setIsClicked}
-        ></ServiceForm>
+          onSubmit={handleCreateService}
+          toggleStatus={isFormVisible}
+          toggleFunction={setIsFormVisible}
+        />
       )}
       <SidePanel selected="service" />
       <div className="service-content">
         <div className="service-container">
           <div className="service-page">
-            <h1 className="service-title">Danh sách dịch vụ</h1>
+            <h1 className="service-title">Service List</h1>
             <div className="actions">
-              <button className="add" onClick={() => setIsClicked(!isClicked)}>
-                + Thêm dịch vụ
-              </button>
               <button
-                className="delete"
-                onClick={handleDeleteSelected}
-                disabled={selectedIds.length === 0}
+                className="add"
+                onClick={() => setIsFormVisible(!isFormVisible)}
               >
-                ❌ Xóa
+                Add Service
               </button>
             </div>
           </div>
-          {/* Ô tìm kiếm */}
+
           <div className="service-search-bar">
             <input
               type="text"
-              placeholder="Tìm theo tên dịch vụ..."
+              placeholder="Search by service name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
           <div className="service-table">
             <ServiceTable
-              services={services}
-              selectedIds={selectedIds}
-              onSelect={handleSelect}
-              onDelete={handleDelete}
+              services={services.filter((s) =>
+                s.name.toLowerCase().includes(searchTerm.toLowerCase())
+              )}
               onEdit={(id) => navigate(`/edit-service/${id}`)}
+              onToggleStatus={handleToggleStatus}
+              onSoftDelete={handleSoftDelete}
             />
           </div>
         </div>

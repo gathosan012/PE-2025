@@ -1,50 +1,44 @@
 import "../styling/components/ServiceTable.scss";
+
 export default function ServiceTable({
   services,
-  selectedIds,
-  onSelect,
-  onDelete,
   onEdit,
+  onToggleStatus, // 👈 đổi tên cho đúng logic
+  onSoftDelete,
 }) {
   return (
     <table className="w-full border text-sm">
       <thead className="bg-gray-100">
         <tr>
-          <th className="p-2">
-            <input type="checkbox" disabled />
-          </th>
-          <th className="p-2 text-center">Tên</th>
-          <th className="p-2 text-center">Loại dịch vụ</th>
-          <th className="p-2 text-right">Đơn giá (VND)</th>
-          <th className="p-2 text-center">Đang dùng</th>
-          <th className="p-2 text-center">Hành động</th>
+          <th className="p-2 text-center">Name</th>
+          <th className="p-2 text-center">Type</th>
+          <th className="p-2 text-right">Price (VND)</th>
+          <th className="p-2 text-center">Active</th>
+          <th className="p-2 text-center">Actions</th>
         </tr>
       </thead>
       <tbody>
         {services.map((s) => (
-          <tr key={s.id} className="border-t">
-            <td className="p-2 text-center">
-              <input
-                type="checkbox"
-                checked={selectedIds.includes(s.id)}
-                onChange={() => onSelect(s.id)}
-              />
-            </td>
+          <tr key={s._id} className="border-t">
             <td className="p-2">{s.name}</td>
             <td className="p-2">{s.type}</td>
             <td className="p-2 text-right">{s.price.toLocaleString()}</td>
             <td className="p-2 text-center">
-              <input type="checkbox" checked={s.active} readOnly />
+              <input
+                type="checkbox"
+                checked={s.status === "active"} // 👈 kiểm tra theo status
+                onChange={() => onToggleStatus(s._id, s.status)} // 👈 gọi đúng handler
+              />
             </td>
             <td className="p-2 text-center space-x-2">
               <button
-                onClick={() => onEdit(s.id)}
+                onClick={() => onEdit(s._id)}
                 className="text-blue-600 hover:text-blue-800"
               >
                 ✏️
               </button>
               <button
-                onClick={() => onDelete(s.id)}
+                onClick={() => onSoftDelete(s._id)}
                 className="text-red-600 hover:text-red-800"
               >
                 ❌
@@ -54,8 +48,8 @@ export default function ServiceTable({
         ))}
         {services.length === 0 && (
           <tr>
-            <td colSpan={6} className="text-center p-4 text-gray-500">
-              Không có dịch vụ nào.
+            <td colSpan={5} className="text-center p-4 text-gray-500">
+              No services found.
             </td>
           </tr>
         )}
