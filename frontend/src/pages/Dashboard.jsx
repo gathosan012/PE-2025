@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import "../styling/home.scss";
+import "../styling/dashboard.scss";
 import SidePanel from "../components/SidePanel";
 import Panel from "../components/Panel";
 import RoomStatusChart from "../components/RoomStatusChart";
 import axios from "axios";
-function Home() {
+function Dashboard() {
   const [occupied, setOccupied] = useState(0);
   const [available, setAvailable] = useState(0);
 
@@ -27,7 +27,7 @@ function Home() {
   }, []);
   return (
     <div className="home-container">
-      <SidePanel selected="home"></SidePanel>
+      <SidePanel selected="dashboard"></SidePanel>
       <div className="home-content">
         <Panel title="Room status">
           <RoomStatusChart occupied={occupied} available={available} />
@@ -40,4 +40,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Dashboard;

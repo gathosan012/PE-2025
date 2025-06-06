@@ -40,10 +40,10 @@ function SidePanel({ selected }) {
       </div>
       <nav className="bottom-container">
         <Link
-          to="/home"
-          className={selected == "home" ? "link active" : "link"}
+          to="/dashboard"
+          className={selected == "dashboard" ? "link active" : "link"}
         >
-          <IoSpeedometer className="icon"></IoSpeedometer>Homepage
+          <IoSpeedometer className="icon"></IoSpeedometer>Dashboard
         </Link>
         <Link
           to="/rooms"

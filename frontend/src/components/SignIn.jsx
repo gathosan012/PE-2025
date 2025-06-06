@@ -36,7 +36,7 @@ function SignIn() {
         if (user.role === "admin") {
           navigate("/admin");
         } else if (user.role === "landlord") {
-          navigate("/home");
+          navigate("/dashboard");
         } else {
           navigate("/");
         }
