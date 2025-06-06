@@ -10,6 +10,7 @@ import {
   getRoomById,
   updateRoom,
   updateRoomStatus,
+  getRoomStatusSummary,
 } from "../controllers/roomController.js";
 
 const roomRoutes = express.Router();
@@ -21,6 +22,16 @@ roomRoutes.post(
   authorizeLandlord,
   upload.single("image"),
   addRoom
+);
+roomRoutes.get(
+  "/status-summary",
+  (req, res, next) => {
+    console.log("✅ [Router] /status-summary hit");
+    next();
+  },
+  authenticateToken,
+  authorizeLandlord,
+  getRoomStatusSummary
 );
 roomRoutes.get("/:id", authenticateToken, authorizeLandlord, getRoomById);
 roomRoutes.put(
