@@ -147,9 +147,12 @@ export default function Service() {
           <div className="service-page">
             <div className="service-title-block">
               <h1 className="service-title">Service List</h1>
+              <div className="break"></div>
               <p className="service-description">
-                Manage your services here. You can add, edit, or delete
-                services.
+                Note: All active services will be automatically included in the
+                customer’s monthly bill. You can add, edit service information,
+                delete services, or temporarily deactivate a service by
+                unticking the checkbox in the "Active" column.
               </p>
             </div>
 

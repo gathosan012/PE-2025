@@ -27,6 +27,16 @@
     background-color: rgba(0, 0, 0, 0.5);
   }
 }
+.logo-fixed {
+  position: absolute;
+  top: 18px;
+  left: 48px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #003b55;
+  z-index: 10;
+  font-family: "Segoe UI", sans-serif;
+}
 
 .signup-container {
   display: flex;
@@ -46,9 +56,9 @@
     flex-direction: column;
     align-items: center;
     row-gap: 30px;
-
+    color: #003b55;
     .title {
-      font-size: 2rem;
+      font-size: 34px;
       font-weight: bold;
     }
 
@@ -84,14 +94,14 @@
       .redirect-link {
         font-size: 0.8rem;
         cursor: pointer;
-        color: blue;
+        color: #003b55;
         text-decoration: underline;
       }
 
       .submit-button {
         all: unset;
         font-size: 1rem;
-        background-color: #14b9ff;
+        background-color: #003b55;
         color: #fff;
         padding: 10px 20px;
         border-radius: 0.5rem;
