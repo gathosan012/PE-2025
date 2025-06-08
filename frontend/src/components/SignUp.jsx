@@ -46,6 +46,9 @@ function SignUp() {
   return (
     <div className="auth-container">
       <div className="background-container" />
+      <div className="logo-fixed" onClick={() => navigate("/")}>
+        🏢 DOMIS
+      </div>
       <div className="signup-container">
         <form className="signup-inner" onSubmit={handleSubmit}>
           <span className="title">Register</span>

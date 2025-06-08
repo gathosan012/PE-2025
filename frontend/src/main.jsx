@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 //import Authentication from "./pages/Authentication";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import Room from "./pages/Room";
 import AddRoomForm from "./components/AddRoomForm";
 import EditRoomForm from "./components/EditRoomForm";
@@ -17,11 +17,10 @@ import Water from "./pages/Water.jsx";
 import Welcome from "./pages/Welcome.jsx";
 import Customer from "./pages/Customer.jsx";
 
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Welcome />
+    element: <Welcome />,
   },
   {
     path: "/login",
@@ -32,8 +31,8 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-    path: "/home",
-    element: <Home />,
+    path: "/dashboard",
+    element: <Dashboard />,
   },
   {
     path: "/rooms",

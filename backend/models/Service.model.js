@@ -11,11 +11,15 @@ const serviceSchema = new mongoose.Schema(
       required: true,
     },
     description: { type: String },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "deleted"],
+      default: "active",
+    },
   },
   {
     timestamps: true,
-  },
-
+  }
 );
 
 const Service = mongoose.model("Service", serviceSchema);

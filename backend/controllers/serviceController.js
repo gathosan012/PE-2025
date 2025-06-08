@@ -1,162 +1,146 @@
-import Service from '../models/Service.model.js'
+import Service from "../models/Service.model.js";
 
-export const createServiceController = async(request,response)=>{
-    try {
-        const {name, price, type, description} = request.body 
-        const landlordId = request.user?.id;
+export const createService = async (req, res) => {
+  try {
+    const { name, price, type, description } = req.body;
+    const landlordID = req.user?.id;
 
-        if(!name || !price || !type ){
-            return response.status(400).json({
-                message : "Enter required fields",
-                error : true,
-                success : false
-            })
-        }
-
-        if(!landlordId){
-            return response.json({
-                message: "Landlord id missing from request",
-                error: true,
-                success: false
-            })
-        }
-
-        const newService = new Service({
-            name ,
-            price,
-            type,
-            description,
-            landlordId
-        })
-        const saveService = await newService.save()
-
-        return response.json({
-            message : "Service Created Successfully",
-            data : saveService,
-            error : false,
-            success : true
-        })
-
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+    if (!name || !price || !type) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields (name, price, type).",
+      });
     }
-}
 
-export const getServiceDetails = async(request,response)=>{
-    try {
-        const { serviceId } = request.body 
+    const newService = new Service({
+      name,
+      price,
+      type,
+      description,
+      landlordID,
+    });
 
-        if (!serviceId) {
-            return response.status(400).json({
-                message: "Service ID is required",
-                error: true,
-                success: false
-            })
-        }
+    const saved = await newService.save();
 
-        const service = await Service.findById({serviceId })
+    return res.status(201).json({
+      success: true,
+      message: "Service created successfully.",
+      data: saved,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error.",
+    });
+  }
+};
 
-        if (!service){
-            return response.status(404).json({
-                message: "service not found",
-                error: true,
-                success: false
-            })
-        }
+// ✅ Lấy toàn bộ dịch vụ theo landlord
+export const getAllServices = async (req, res) => {
+  try {
+    const landlordID = req.user?.id;
+    const services = await Service.find({
+      landlordID,
+      status: { $ne: "deleted" },
+    });
 
-        return response.json({
-            message : "service details retrieved",
-            data : service,
-            error : false,
-            success : true
-        })
+    return res.json({
+      success: true,
+      message: "Fetched services successfully.",
+      data: services,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error.",
+    });
+  }
+};
 
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+// ✅ Lấy 1 dịch vụ theo ID
+export const getServiceById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const landlordID = req.user?.id;
+
+    const service = await Service.findOne({ _id: id, landlordID });
+
+    if (!service) {
+      return res.status(404).json({
+        success: false,
+        message: "Service not found.",
+      });
     }
-}
 
-export const updateServiceDetails = async(request,response)=>{
-    try {
-        const { _id, ...updateFields } = request.body 
+    return res.json({
+      success: true,
+      data: service,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error.",
+    });
+  }
+};
 
-        if(!_id){
-            return response.status(400).json({
-                message : "provide service _id",
-                error : true,
-                success : false
-            })
-        }
+// ✅ Cập nhật dịch vụ
+export const updateService = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const landlordID = req.user?.id;
+    const updateData = req.body;
 
-        const updateService = await Service.findByIdAndUpdate({ _id, updateFields})
+    const updated = await Service.findOneAndUpdate(
+      { _id: id, landlordID },
+      updateData,
+      { new: true }
+    );
 
-        if (!updateService) {
-            return response.status(404).json({
-                message: "Service not found",
-                error: true,
-                success: false        
-            })
-        }
-
-        return response.json({
-            message : "updated successfully",
-            data : updateService,
-            error : false,
-            success : true
-        })
-
-
-
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Service not found or unauthorized.",
+      });
     }
-}
 
-export const deleteServiceDetails = async(request,response)=>{
-    try {
-        const { _id } = request.body 
+    return res.json({
+      success: true,
+      message: "Service updated successfully.",
+      data: updated,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error.",
+    });
+  }
+};
 
-        if(!_id){
-            return response.status(400).json({
-                message : "provide _id ",
-                error : true,
-                success : false
-            })
-        }
+// ✅ Xóa dịch vụ
+export const deleteService = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const landlordID = req.user?.id;
 
-        const deleteService = await Service.findOneAndDelete({_id})
+    const deleted = await Service.findOneAndDelete({ _id: id, landlordID });
 
-        if (!deletedService) {
-        return response.status(404).json({
-            message: "Service not found",
-            error: true,
-            success: false,
-        });
-        }
-
-        return response.json({
-            message : "Delete successfully",
-            error : false,
-            success : true,
-            data : deleteService
-        })
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Service not found or unauthorized.",
+      });
     }
-}
+
+    return res.json({
+      success: true,
+      message: "Service deleted successfully.",
+      data: deleted,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error.",
+    });
+  }
+};

@@ -1,7 +1,7 @@
 import React from "react";
 import "../styling/components/panel.scss";
 
-function Panel({ title, columns }) {
+function Panel({ title, columns, children }) {
   return (
     <div className="panel-container">
       <div className="panel-top">
@@ -13,6 +13,7 @@ function Panel({ title, columns }) {
           {columns?.map((column, idx) => {
             return <div className=""></div>;
           })}
+          {children}
         </div>
       </div>
     </div>
