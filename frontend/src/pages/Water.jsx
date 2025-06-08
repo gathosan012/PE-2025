@@ -12,18 +12,18 @@ function Water() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("authToken");
+  // useEffect(() => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //   const token = localStorage.getItem("authToken");
 
-    if (!user || user.role !== "landlord" || !token) {
-      alert("Access denied. Only landlord can access this page.");
-      navigate("/login");
-      return;
-    }
+  //   if (!user || user.role !== "landlord" || !token) {
+  //     alert("Access denied. Only landlord can access this page.");
+  //     navigate("/login");
+  //     return;
+  //   }
 
-    fetchCurrentMonthData();
-  }, []);
+  //   fetchCurrentMonthData();
+  // }, []);
 
   const handleInputChange = (index, value) => {
     const newData = [...data];
@@ -138,7 +138,7 @@ function Water() {
       <div className="water-content">
         <div className="water-inner">
           <div className="water-upper">
-            <h1 className="service-title">Electricity Index</h1>
+            <h1 className="service-title">Water Meter</h1>
             <button className="search-btn" onClick={handleFilter}>
               <FaSearch className="icon"></FaSearch>View</button>
           </div>

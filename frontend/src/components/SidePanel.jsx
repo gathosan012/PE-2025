@@ -75,7 +75,9 @@ function SidePanel({ selected }) {
           <span>Water Meter</span>
         </Link>
 
-        <Link to="/customer" className="link">
+        <Link to="/customer"
+          className={selected === "customer" ? "link active" : "link"}
+        >
           <IoPerson className="icon"></IoPerson>
           Customer
         </Link>

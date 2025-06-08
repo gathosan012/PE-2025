@@ -57,15 +57,16 @@ const Room = () => {
         alert(" Could not fetch room data!");
       });
   };
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "landlord") {
-      alert("Access denied. Only landlord can access this page.");
-      navigate("/login");
-    } else {
-      fetchRooms();
-    }
-  }, []);
+  
+  // useEffect(() => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //   if (!user || user.role !== "landlord") {
+  //     alert("Access denied. Only landlord can access this page.");
+  //     navigate("/login");
+  //   } else {
+  //     fetchRooms();
+  //   }
+  // }, []);
 
   const handleRoomStatusChange = (e) => {
     setRoomStatus(e.target.value);
