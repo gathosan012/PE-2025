@@ -16,5 +16,10 @@
     grid-template-rows: repeat(2, 40vh);
     column-gap: 15px;
     row-gap: 15px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
   }
 }
