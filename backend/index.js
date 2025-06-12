@@ -11,7 +11,7 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://pe-2025.onrender.com/",
     credentials: true,
   })
 );
