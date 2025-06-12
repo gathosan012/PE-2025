@@ -25,7 +25,7 @@ function SignUp() {
     e.preventDefault();
     console.log("Sending data:", formData);
     axios
-      .post("http://localhost:5000/api/users/register", formData)
+      .post("https://pe-2025.onrender.com", formData)
       .then((response) => {
         console.log(response.data);
         if (response.status === 200) {
