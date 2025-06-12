@@ -11,7 +11,7 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: "https://pe-2025.onrender.com/",
+    origin: "https://app-frontend-tmwi.onrender.com",
     credentials: true,
   })
 );
