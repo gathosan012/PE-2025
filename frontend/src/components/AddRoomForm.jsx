@@ -55,7 +55,7 @@ const AddRoomForm = ({ onSuccess }) => {
         return;
       }
 
-      const res = await axios.post("http://localhost:5000/api/rooms", form, {
+      const res = await axios.post("https://pe-2025.onrender.com", form, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

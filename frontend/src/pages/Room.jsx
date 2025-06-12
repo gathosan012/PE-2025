@@ -41,7 +41,7 @@ const Room = () => {
 
     console.log("Token frontend:", token); // Debug token
     axios
-      .get("http://localhost:5000/api/rooms", {
+      .get("https://pe-2025.onrender.com", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

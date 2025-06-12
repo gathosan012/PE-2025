@@ -42,7 +42,7 @@ const AddCustomerForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/tenant",
+        "https://pe-2025.onrender.com",
         formData
       );
       if (response.data.success) {
