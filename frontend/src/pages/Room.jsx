@@ -41,7 +41,7 @@ const Room = () => {
 
     console.log("Token frontend:", token); // Debug token
     axios
-      .get("https://pe-2025.onrender.com", {
+      .get("https://pe-2025.onrender.com/api/rooms", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -113,7 +113,7 @@ const Room = () => {
 
   const handleDeleteRoom = async (roomId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/rooms/${roomId}`);
+      await axios.delete(`https://pe-2025.onrender.com/api/rooms/${roomId}`);
 
       setRooms((prevRooms) => prevRooms.filter((room) => room._id !== roomId));
 

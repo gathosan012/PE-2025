@@ -39,7 +39,7 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
     try {
       const token = localStorage.getItem("authToken");
       await axios.put(
-        `http://localhost:5000/api/rooms/${formData._id}`,
+        `https://pe-2025.onrender.com/api/rooms/${formData._id}`,
         updatedData,
         {
           headers: {
