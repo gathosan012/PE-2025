@@ -97,13 +97,12 @@ const AddRoomForm = ({ onSuccess }) => {
                 />
               </div>
               <div className="form-group">
-                <label>Length *</label>
+                <label>Length </label>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     name="length"
                     value={formData.length}
                     onChange={handleChange}
-                    required
                   />
                   <span style={{ marginLeft: "8px" }}>M</span>
                 </div>
@@ -135,13 +134,12 @@ const AddRoomForm = ({ onSuccess }) => {
                 </div>
               </div>
               <div className="form-group">
-                <label>Width *</label>
+                <label>Width </label>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     name="width"
                     value={formData.width}
                     onChange={handleChange}
-                    required
                   />
                   <span style={{ marginLeft: "8px" }}>M</span>
                 </div>
@@ -204,12 +202,13 @@ const AddRoomForm = ({ onSuccess }) => {
             style={{ flexDirection: "column" }}
           >
             <div className="form-group">
-              <label>Address </label>
+              <label>Address *</label>
               <textarea
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 rows={1}
+                required
               />
             </div>
             <div className="form-group">

@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 //import Authentication from "./pages/Authentication";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import Room from "./pages/Room";
 import AddRoomForm from "./components/AddRoomForm";
 import EditRoomForm from "./components/EditRoomForm";
@@ -15,12 +15,12 @@ import AddCustomerForm from "./components/AddCustomerForm";
 import Electric from "./pages/Electric.jsx";
 import Water from "./pages/Water.jsx";
 import Welcome from "./pages/Welcome.jsx";
-
+import Customer from "./pages/Customer.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Welcome />
+    element: <Welcome />,
   },
   {
     path: "/login",
@@ -31,8 +31,8 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-    path: "/home",
-    element: <Home />,
+    path: "/dashboard",
+    element: <Dashboard />,
   },
   {
     path: "/rooms",
@@ -44,6 +44,7 @@ const router = createBrowserRouter([
   },
   { path: "/rooms/edit/:id", element: <EditRoomForm /> },
   { path: "/add-customer/:roomId", element: <AddCustomerForm /> },
+  { path: "/add-customer/:roomId/:contractId", element: <AddCustomerForm /> },
   { path: "/service", element: <Service /> },
   { path: "/service/edit", element: <ServiceForm /> },
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/water",
     element: <Water />,
+  },
+  {
+    path: "/customer",
+    element: <Customer />,
   },
 ]);
 

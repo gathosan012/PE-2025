@@ -5,7 +5,7 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   max-width: 800px;
   margin: auto;
-  font-family: Arial, sans-serif;
+
   position: absolute;
   z-index: 3;
   display: flex;
@@ -16,9 +16,12 @@
 }
 
 .edit-form-title {
-  font-size: 24px;
+  font-size: 40px;
   font-weight: bold;
-  margin-bottom: 20px;
+  color: #4d5b76;
+  margin-bottom: 30px;
+  margin-top: 5px;
+  text-align: center;
 }
 
 .edit-form-grid {
@@ -36,7 +39,12 @@
   grid-column: span 2;
 }
 .service-label {
-  margin-bottom: 10px;
+  display: block;
+  font-weight: bold;
+  color: #4d5b76;
+  margin-bottom: 6px;
+  margin-top: 0px;
+  font-size: 18px;
 }
 .service-input,
 .textarea {
@@ -90,4 +98,24 @@
 
 .space-x-2 > *:not(:last-child) {
   margin-right: 8px;
+}
+.btn-back {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+.btn-save {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
 }

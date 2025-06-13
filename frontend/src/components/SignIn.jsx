@@ -36,7 +36,7 @@ function SignIn() {
         if (user.role === "admin") {
           navigate("/admin");
         } else if (user.role === "landlord") {
-          navigate("/home");
+          navigate("/dashboard");
         } else {
           navigate("/");
         }
@@ -58,6 +58,9 @@ function SignIn() {
   return (
     <div className="auth-container">
       <div className="background-container" />
+      <div className="logo-fixed" onClick={() => navigate("/")}>
+        🏢 DOMIS
+      </div>
       <div className="signin-container">
         <form className="signin-inner" onSubmit={handleSubmit}>
           <span className="title">Log in</span>

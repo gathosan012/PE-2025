@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router";
 import "../styling/components/sidePanel.scss";
@@ -17,33 +18,32 @@ import {
   IoLogOut,
 } from "react-icons/io5";
 
-/*const [username, setUsername] = useState("");
-useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/userInfo");
-      setUsername(res.data.username);
-    } catch (err) {
-      console.error("Failed to fetch user info", err);
-    }
+function SidePanel({ selected }) {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const username = user?.username || "user";
+
+  const handleLogout = () => {
+    const confirmed = window.confirm("Do you want to log out?");
+    if (!confirmed) return;
+
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+    navigate("/");
   };
 
-  fetchUser();
-}, []);
-*/
-function SidePanel({ selected }) {
   return (
     <div className="side-panel-container">
       <div className="top-container">
         <h1>APARTMENT MANAGEMENT</h1>
-        <h2>Hello, user</h2>
+        <h2>Hello, {username}</h2>
       </div>
       <nav className="bottom-container">
         <Link
-          to="/home"
-          className={selected == "home" ? "link active" : "link"}
+          to="/dashboard"
+          className={selected == "dashboard" ? "link active" : "link"}
         >
-          <IoSpeedometer className="icon"></IoSpeedometer>Homepage
+          <IoSpeedometer className="icon"></IoSpeedometer>Dashboard
         </Link>
         <Link
           to="/rooms"
@@ -53,7 +53,7 @@ function SidePanel({ selected }) {
         </Link>
         <Link
           to="/service"
-          className={selected === "services" ? "link active" : "link"}
+          className={selected === "service" ? "link active" : "link"}
         >
           <IoCube className="icon" />
           <span>Service</span>
@@ -75,17 +75,20 @@ function SidePanel({ selected }) {
           <span>Water Meter</span>
         </Link>
 
-        <Link to="/customer" className="link">
+        <Link to="/customer"
+          className={selected === "customer" ? "link active" : "link"}
+        >
           <IoPerson className="icon"></IoPerson>
           Customer
         </Link>
-        <Link
-          to="/logout"
-          className={selected === "logout" ? "link active" : "link"}
+        <div
+          className="link"
+          onClick={handleLogout}
+          style={{ cursor: "pointer" }}
         >
           <IoLogOut className="icon" />
           <span>Log out</span>
-        </Link>
+        </div>
       </nav>
     </div>
   );

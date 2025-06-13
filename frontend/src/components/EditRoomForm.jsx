@@ -83,13 +83,12 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
                 />
               </div>
               <div className="form-group">
-                <label>Length *</label>
+                <label>Length </label>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     name="length"
                     value={formData.length}
                     onChange={handleChange}
-                    required
                   />
                   <span style={{ marginLeft: "8px" }}>M</span>
                 </div>
@@ -121,19 +120,18 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
                 </div>
               </div>
               <div className="form-group">
-                <label>Width *</label>
+                <label>Width </label>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <input
                     name="width"
                     value={formData.width}
                     onChange={handleChange}
-                    required
                   />
                   <span style={{ marginLeft: "8px" }}>M</span>
                 </div>
               </div>
               <div className="form-group">
-                <label>Gender allowed *</label>
+                <label>Gender allowed </label>
                 <div
                   style={{ display: "flex", gap: "24px", marginTop: "16px" }}
                 >
@@ -179,7 +177,7 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
                     onChange={handleChange}
                     required
                   />
-                  <span style={{ marginLeft: "8px" }}>Phòng</span>
+                  <span style={{ marginLeft: "8px" }}>Room</span>
                 </div>
               </div>
             </div>
@@ -196,10 +194,11 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
                 value={formData.address}
                 onChange={handleChange}
                 rows={1}
+                required
               />
             </div>
             <div className="form-group">
-              <label>Description *</label>
+              <label>Description </label>
               <textarea
                 name="description"
                 value={formData.description}
@@ -208,7 +207,7 @@ const EditRoomForm = ({ roomData, onSuccess }) => {
               />
             </div>
             <div className="form-group">
-              <label>Image *</label>
+              <label>Image </label>
               <input type="file" onChange={handleFileChange} />
             </div>
           </div>

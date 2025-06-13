@@ -1,24 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styling/components/ServiceForm.scss";
-import { useNavigate } from "react-router-dom";
 
 function ServiceForm({
-  title = "Thêm dịch vụ",
+  title = "Add Service",
   initialData = { name: "", type: "", price: 0, active: true, note: "" },
   onSubmit,
-  onCancel,
   toggleStatus,
   toggleFunction,
 }) {
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    setFormData((prev) => {
+      if (JSON.stringify(prev) !== JSON.stringify(initialData)) {
+        return initialData;
+      }
+      return prev;
+    });
+  }, [initialData]);
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Tên là bắt buộc";
-    if (!formData.type) newErrors.type = "Loại là bắt buộc";
-    if (formData.price <= 0) newErrors.price = "Đơn giá phải lớn hơn 0";
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.type) newErrors.type = "Type is required";
+    if (formData.price <= 0) newErrors.price = "Price must be greater than 0";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -33,7 +39,9 @@ function ServiceForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validate()) onSubmit(formData);
+    if (validate()) {
+      onSubmit(formData);
+    }
   };
 
   return (
@@ -42,7 +50,7 @@ function ServiceForm({
 
       <div className="edit-form-grid">
         <div className="edit-form-group">
-          <label className="service-label">Tên *</label>
+          <label className="service-label">Name *</label>
           <input
             name="name"
             value={formData.name}
@@ -52,9 +60,24 @@ function ServiceForm({
           {errors.name && <p className="error">{errors.name}</p>}
         </div>
 
-        {/* Đơn giá và Đang dùng cùng hàng */}
         <div className="edit-form-group">
-          <label className="service-label">Đơn giá *</label>
+          <label className="service-label">Type *</label>
+          <select
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+            className="service-input"
+          >
+            <option value="">Select type</option>
+            <option value="ELECTRIC">Electric</option>
+            <option value="WATER">Water</option>
+            <option value="OTHER">Other</option>
+          </select>
+          {errors.type && <p className="error">{errors.type}</p>}
+        </div>
+
+        <div className="edit-form-group">
+          <label className="service-label">Price *</label>
           <div className="flex items-center">
             <input
               type="number"
@@ -65,7 +88,7 @@ function ServiceForm({
             />
             <span className="currency">VND</span>
           </div>
-          {errors.price && <div className="error">{errors.price}</div>}
+          {errors.price && <p className="error">{errors.price}</p>}
         </div>
 
         <div className="edit-form-group">
@@ -77,12 +100,12 @@ function ServiceForm({
               onChange={handleChange}
               className="service-checkbox"
             />
-            Đang dùng
+            Active
           </label>
         </div>
 
         <div className="edit-form-group full-row">
-          <label className="service-label">Ghi chú</label>
+          <label className="service-label">Note</label>
           <textarea
             name="note"
             value={formData.note}
@@ -93,19 +116,19 @@ function ServiceForm({
       </div>
 
       <div className="flex justify-between items-center pt-4">
-        <p className="text-red-600 text-sm">(*): Thông tin bắt buộc</p>
+        <p className="text-red-600 text-sm">(*): Required fields</p>
         <div className="space-x-2">
           <button
             className="btn-back"
-            onClick={() => toggleFunction(!toggleStatus)}
+            onClick={(e) => {
+              e.preventDefault();
+              toggleFunction(!toggleStatus);
+            }}
           >
-            ⬅ Quay về
+            Back
           </button>
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-          >
-            ✅ Lưu
+          <button className="btn-save" type="submit">
+            Save
           </button>
         </div>
       </div>
