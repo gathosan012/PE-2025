@@ -12,7 +12,7 @@ function Dashboard() {
     const token = localStorage.getItem("authToken");
 
     axios
-      .get("http://localhost:5000/api/rooms/status-summary", {
+      .get("https://pe-2025.onrender.com/api/rooms/status-summary", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

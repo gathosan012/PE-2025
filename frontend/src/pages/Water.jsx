@@ -44,7 +44,7 @@ function Water() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/water-meters/add-new-meters",
+        "https://pe-2025.onrender.com/api/water-meters/add-new-meters",
         {
           contract_id: entry.contract_id,
           currentIndex: entry.new,
@@ -68,7 +68,7 @@ function Water() {
     const token = localStorage.getItem("authToken");
 
     axios
-      .get("http://localhost:5000/api/water-meters/index", {
+      .get("https://pe-2025.onrender.com/api/water-meters/index", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -111,7 +111,7 @@ function Water() {
 
     axios
       .get(
-        `http://localhost:5000/api/water-meters/history?month=${month}&year=${year}`,
+        `https://pe-2025.onrender.com/api/water-meters/history?month=${month}&year=${year}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

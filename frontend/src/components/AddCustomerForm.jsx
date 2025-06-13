@@ -47,18 +47,13 @@ const AddCustomerForm = () => {
       }
 
       const response = await axios.post(
-<<<<<<< HEAD
-        "https://pe-2025.onrender.com/api/tenant",
-        formData
-=======
-        "http://localhost:5000/api/tenant/add",
+        "https://pe-2025.onrender.com/api/tenant/add",
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
->>>>>>> new-origin/integration
       );
       if (response.data.success) {
         alert("Tenant added successfully!");
@@ -94,7 +89,7 @@ const AddCustomerForm = () => {
         if (contractId) {
           // Fetch contract (Từ tenantId fetch được tenant Information)
           const res = await axios.get(
-            `http://localhost:5000/api/contracts/${contractId}`,
+            `https://pe-2025.onrender.com/api/contracts/${contractId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -136,7 +131,7 @@ const AddCustomerForm = () => {
         } else {
           //get price of room
           const res = await axios.get(
-            `http://localhost:5000/api/rooms/${roomId}`,
+            `https://pe-2025.onrender.com/api/rooms/${roomId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -184,7 +179,7 @@ const AddCustomerForm = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:5000/api/contracts/add",
+        "https://pe-2025.onrender.com/api/contracts/add",
         contractPayload,
         {
           headers: {
@@ -214,7 +209,7 @@ const AddCustomerForm = () => {
     try {
       const token = localStorage.getItem("authToken");
       const res = await axios.put(
-        `http://localhost:5000/api/contracts/${contractId}`,
+        `https://pe-2025.onrender.com/api/contracts/${contractId}`,
         { status: "terminated" },
         {
           headers: {
@@ -239,7 +234,7 @@ const AddCustomerForm = () => {
 
       // lấy tenantId từ contract trước
       const res = await axios.get(
-        `http://localhost:5000/api/contracts/${contractId}`,
+        `https://pe-2025.onrender.com/api/contracts/${contractId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -252,7 +247,7 @@ const AddCustomerForm = () => {
       }
 
       const updateRes = await axios.put(
-        `http://localhost:5000/api/tenant/${tenantId}`,
+        `https://pe-2025.onrender.com/api/tenant/${tenantId}`,
         formData,
         {
           headers: {

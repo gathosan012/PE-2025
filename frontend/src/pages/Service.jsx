@@ -49,7 +49,7 @@ export default function Service() {
     try {
       const token = localStorage.getItem("authToken");
       await axios.post(
-        "http://localhost:5000/api/services/create-service",
+        "https://pe-2025.onrender.com/api/services/create-service",
         { ...data, status: "active" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -64,7 +64,7 @@ export default function Service() {
     try {
       const token = localStorage.getItem("authToken");
       await axios.put(
-        `http://localhost:5000/api/services/update-service/${editingService._id}`,
+        `https://pe-2025.onrender.com/api/services/update-service/${editingService._id}`,
         data,
         { headers: { Authorization: `Bearer ${token}` } }
       );

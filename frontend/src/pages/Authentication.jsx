@@ -35,6 +35,6 @@ function Authentication({ mode = "signin" }) {
       {mode === "signin" ? <SignIn /> : <SignUp />}
     </div>
   );
-}
+}}
 
 export default Authentication;
