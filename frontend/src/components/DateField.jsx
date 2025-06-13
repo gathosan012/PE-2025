@@ -3,14 +3,14 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styling/components/dateField.scss";
 
-function DateField({ selectedDate, setSelectedDate }) {
+function DateField({selectedDate, setSelectedDate, title }) {
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
   return (
     <div className="field-input">
-      <label>Tháng/năm</label>
+      <label>{ title == null ? "Month/Year" : title }</label>
       <DatePicker
         selected={selectedDate}
         onChange={(date) => setSelectedDate(date)}

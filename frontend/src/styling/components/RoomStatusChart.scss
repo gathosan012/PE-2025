@@ -1,0 +1,51 @@
+.room-status-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: clamp(
+    200px,
+    30vw,
+    200px
+  ); // ✅ responsive: co giãn theo chiều rộng cửa sổ
+  padding: 10px;
+  margin: 0 auto;
+
+  .chart-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .legend {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    span {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      color: white;
+      font-weight: 500;
+    }
+
+    .occupied {
+      background-color: #317ac4;
+    }
+
+    .available {
+      background-color: #f14a68;
+    }
+  }
+}
