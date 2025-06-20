@@ -1,39 +1,63 @@
-.water-container {
+.payment-container {
   height: 100vh;
   width: 100%;
-  position: relative;
   display: flex;
   background-color: #dddddd;
-
-  .water-content {
-    display: flex;
+  overflow-x: hidden;
+  overflow-x: auto;
+  .payment-content {
     padding: 20px 15px;
+    display: flex;
     width: 100%;
     box-sizing: border-box;
 
-    .water-inner {
+    .payment-inner {
       background-color: #fff;
-      width: 100%;
-      padding: 30px;
       display: flex;
       flex-direction: column;
+      padding: 30px;
       flex: 1;
-      min-height: 0;
-      overflow: hidden;
+
       box-sizing: border-box;
 
-      .water-upper {
+      .payment-upper {
         display: flex;
         align-items: center;
         justify-content: space-between;
 
-        .service-title {
+        .payment-title {
           margin-top: 10px;
           font-size: 35px;
           font-weight: bold;
           margin-bottom: 10px;
           color: #47546d;
           text-align: left;
+        }
+
+        .action-buttons {
+          display: flex;
+          column-gap: 1rem;
+
+          .btn-cal {
+            background-color: #efbe2d;
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+          }
+          .btn-exp {
+            background-color: #22c55e;
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+          }
         }
       }
 
@@ -44,18 +68,20 @@
         margin-bottom: 20px;
       }
 
-      .water-lower {
+      .payment-lower {
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
-        margin-top: 3px;
+        flex: 1;
+        min-height: 0;
+
         .filter-section {
           padding: 20px;
           display: flex;
           column-gap: 3rem;
           align-items: center;
-          margin-bottom: 10px;
+          margin-bottom: 1rem;
         }
+
         .search-btn {
           background-color: #efbe2d;
           color: white;
@@ -68,15 +94,21 @@
           align-items: center;
           column-gap: 0.5rem;
           font-weight: bold;
+
+          .icon {
+            font-size: 14px;
+          }
         }
+
         .table-wrapper {
-          overflow-y: auto;
           flex: 1;
+          overflow-y: auto;
           max-height: 60vh;
         }
-        .water-table {
+
+        .payment-table {
           width: 100%;
-          margin-top: 0px;
+          margin-top: 20px;
           border-collapse: collapse;
 
           th,
@@ -91,29 +123,32 @@
             background-color: #f2f2f2;
             font-weight: bold;
           }
+
+          .gray-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-right: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .blue-icon {
+            color: #3498db;
+          }
+
+          .green-icon {
+            color: #2ecc71;
+          }
+
+          .red-icon {
+            color: #e74c3c;
+          }
         }
       }
-    }
-
-    .gray-btn {
-      background-color: #f0f0f0;
-      border: 1px solid #dcdcdc;
-      border-radius: 6px;
-      padding: 6px 10px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      transition: background-color 0.2s ease;
-    }
-
-    .gray-btn:hover {
-      background-color: #e0e0e0;
-    }
-
-    .blue-icon {
-      color: #3498db;
     }
   }
 }

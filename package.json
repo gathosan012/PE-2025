@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "apartment_management_system_pe2025",
   "version": "1.0.0",
   "description": "Web Application",
@@ -16,4 +17,11 @@
     "url": "https://github.com/Hahaha2808/Apartment_Management_System_PE2025/issues"
   },
   "homepage": "https://github.com/Hahaha2808/Apartment_Management_System_PE2025#readme"
+=======
+  "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "react-hook-form": "^7.58.1",
+    "yup": "^1.6.1"
+  }
+>>>>>>> integration
 }
