@@ -32,7 +32,7 @@ function Customer() {
           (selectedEndDate.getMonth() + 1);
       }
       const res = await axios.get(
-        "http://localhost:5000/api/contracts/customers",
+        "https://pe-2025.onrender.com/api/contracts/customers",
         {
           params,
           headers: {

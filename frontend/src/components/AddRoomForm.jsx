@@ -48,7 +48,7 @@ const AddRoomForm = ({ onSuccess }) => {
         return;
       }
 
-      const res = await axios.post("http://localhost:5000/api/rooms", form, {
+      const res = await axios.post("https://pe-2025.onrender.com/api/rooms", form, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -67,45 +67,6 @@ const AddRoomForm = ({ onSuccess }) => {
     setImage(e.target.files[0]);
   };
 
-<<<<<<< HEAD
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = new FormData();
-
-    // Append data to form
-    for (let key in formData) {
-      form.append(key, formData[key]);
-    }
-    if (image) form.append("image", image); //add image file
-
-    try {
-      const token = localStorage.getItem("authToken");
-      console.log("Token from localStorage:", token);
-      console.log("Token sent:", token); // Kiểm tra token
-
-      if (!token) {
-        alert("You are not logged in or token missing!");
-        return;
-      }
-
-      const res = await axios.post("https://pe-2025.onrender.com/api/rooms", form, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log("✔  Add room successfully", res.data);
-      onSuccess?.();
-    } catch (err) {
-      console.error(
-        "❌ Error when submit form:",
-        err.response?.data || err.message
-      );
-    }
-  };
-
-=======
->>>>>>> integration
   return (
     <div className="edit-room-wrapper">
       <div className="edit-room-header">

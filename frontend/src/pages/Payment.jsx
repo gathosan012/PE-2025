@@ -59,13 +59,13 @@ function Payments() {
         };
 
         const [contractRes, roomRes, paymentRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/contracts", {
+          axios.get("https://pe-2025.onrender.com/api/contracts", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:5000/api/rooms", {
+          axios.get("https://pe-2025.onrender.com/api/rooms", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:5000/api/payments", {
+          axios.get("https://pe-2025.onrender.com/api/payments", {
             headers: { Authorization: `Bearer ${token}` },
             params,
           }),
@@ -118,7 +118,7 @@ function Payments() {
       const formattedInvoiceDate = invoiceDate.toISOString();
 
       const res = await axios.post(
-        "http://localhost:5000/api/payments/calculate/single",
+        "https://pe-2025.onrender.com/api/payments/calculate/single",
         {
           roomId: selectedRoom,
           monthYear,
@@ -188,7 +188,7 @@ function Payments() {
         endDate: end.toISOString(),
       };
 
-      const res = await axios.get("http://localhost:5000/api/payments", {
+      const res = await axios.get("https://pe-2025.onrender.com/api/payments", {
         headers: { Authorization: `Bearer ${token}` },
         params,
       });
@@ -223,7 +223,7 @@ function Payments() {
     try {
       const token = localStorage.getItem("authToken");
 
-      await axios.delete(`http://localhost:5000/api/payments/${id}`, {
+      await axios.delete(`https://pe-2025.onrender.com/api/payments/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -238,7 +238,7 @@ function Payments() {
     try {
       const token = localStorage.getItem("authToken");
       const res = await axios.get(
-        `http://localhost:5000/api/payments/${paymentId}`,
+        `https://pe-2025.onrender.com/api/payments/${paymentId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

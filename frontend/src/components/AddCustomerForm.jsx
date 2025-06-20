@@ -26,56 +26,7 @@ const AddCustomerForm = () => {
     permanentAddress: "",
     note: "",
   });
-<<<<<<< HEAD
 
-  const handleBack = () => {
-    navigate("/rooms");
-  };
-
-  const handleChangeTenant = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSaveTenant = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        alert("You need to log in first.");
-      }
-
-      const response = await axios.post(
-        "https://pe-2025.onrender.com/api/tenant/add",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.data.success) {
-        alert("Tenant added successfully!");
-        //navigate("/rooms");
-        setTenantId(response.data.tenant._id);
-        setActiveTab("contract");
-      } else {
-        alert("Save failed: " + response.data.message);
-      }
-    } catch (error) {
-      if (error.response && error.response.data) {
-        console.error("Error from server:", error.response.data);
-        alert("Error: " + JSON.stringify(error.response.data));
-      } else {
-        alert("Unknown error occurred.");
-      }
-    }
-  };
-=======
->>>>>>> integration
   const [contractData, setContractData] = useState({
     startDate: "",
     endDate: "",
@@ -165,7 +116,7 @@ const AddCustomerForm = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/api/tenant/add",
+        "https://pe-2025.onrender.com/api/tenant/add",
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -187,7 +138,7 @@ const AddCustomerForm = () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        "http://localhost:5000/api/contracts/add",
+        "https://pe-2025.onrender.com/api/contracts/add",
         { roomId, tenantId, ...contractData, status: "active" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -286,53 +237,7 @@ const AddCustomerForm = () => {
     }
   }, [roomId, contractId]);
 
-<<<<<<< HEAD
-  const handleChangeContract = (e) => {
-    const { name, value } = e.target;
-    setContractData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-  const handleSaveContract = async () => {
-    if (!tenantId) {
-      alert("Tenant ID missing. Please save tenant first.");
-      return;
-    }
 
-    try {
-      const token = localStorage.getItem("authToken");
-      const contractPayload = {
-        roomId,
-        tenantId,
-        ...contractData,
-        status: "active",
-      };
-
-      const response = await axios.post(
-        "https://pe-2025.onrender.com/api/contracts/add",
-        contractPayload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.success) {
-        alert("Contract saved successfully!");
-        navigate("/rooms");
-      } else {
-        alert("Failed to save contract.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error saving contract.");
-    }
-  };
-
-=======
->>>>>>> integration
   const handleEndContract = async () => {
     if (!contractId) return;
 

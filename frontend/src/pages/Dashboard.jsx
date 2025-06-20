@@ -31,7 +31,7 @@ function Dashboard() {
         console.error("Failed to fetch room status summary", err);
       });
     axios
-      .get("http://localhost:5000/api/contracts/expiring", {
+      .get("https://pe-2025.onrender.com/api/contracts/expiring", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {

@@ -45,7 +45,7 @@ function Electric() {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/electric-meters/add-new-meters",
+        "https://pe-2025.onrender.com/api/electric-meters/add-new-meters",
         {
           contract_id: entry.contract_id,
           currentIndex: entry.new,
@@ -68,7 +68,7 @@ function Electric() {
     const token = localStorage.getItem("authToken");
 
     axios
-      .get("http://localhost:5000/api/electric-meters/index", {
+      .get("https://pe-2025.onrender.com/api/electric-meters/index", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -122,7 +122,7 @@ function Electric() {
     // ❗ Tháng khác → gọi API /history
     axios
       .get(
-        `http://localhost:5000/api/electric-meters/history?month=${
+        `https://pe-2025.onrender.com/api/electric-meters/history?month=${
           month + 1
         }&year=${year}`,
         {

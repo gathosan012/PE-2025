@@ -88,7 +88,7 @@ const Room = () => {
       if (address) queryParams.append("address", address);
 
       const response = await axios.get(
-        `http://localhost:5000/api/rooms?${queryParams.toString()}`,
+        `https://pe-2025.onrender.com/api/rooms?${queryParams.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -145,7 +145,7 @@ const Room = () => {
     try {
       const token = localStorage.getItem("authToken");
       await axios.patch(
-        `http://localhost:5000/api/rooms/${roomId}/status`,
+        `https://pe-2025.onrender.com/api/rooms/${roomId}/status`,
         { status: "available" },
         {
           headers: {
@@ -242,7 +242,7 @@ const Room = () => {
                 <div className="room-image">
                   {room.image ? (
                     <img
-                      src={`http://localhost:5000/uploads/${room.image}`}
+                      src={`https://pe-2025.onrender.com/uploads/${room.image}`}
                       alt={`Room ${room.roomNumber}`}
                     />
                   ) : (

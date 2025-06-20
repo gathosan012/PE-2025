@@ -17,7 +17,7 @@ export default function Service() {
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.get("http://localhost:5000/api/services", {
+      const response = await axios.get("https://pe-2025.onrender.com/api/services", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const filtered = (response.data.data || []).filter(
@@ -81,7 +81,7 @@ export default function Service() {
     try {
       const token = localStorage.getItem("authToken");
       await axios.put(
-        `http://localhost:5000/api/services/update-service/${id}`,
+        `https://pe-2025.onrender.com/api/services/update-service/${id}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -100,7 +100,7 @@ export default function Service() {
     try {
       const token = localStorage.getItem("authToken");
       await axios.put(
-        `http://localhost:5000/api/services/update-service/${id}`,
+        `https://pe-2025.onrender.com/api/services/update-service/${id}`,
         { status: "deleted" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -114,7 +114,7 @@ export default function Service() {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.get(
-        `http://localhost:5000/api/services/service/${id}`,
+        `https://pe-2025.onrender.com/api/services/service/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setEditingService(response.data.data);
