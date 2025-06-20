@@ -30,10 +30,9 @@ const Room = () => {
 
   const fetchRooms = () => {
     const token = localStorage.getItem("authToken");
-    // Kiểm tra nếu token không tồn tại
+
     if (!token) {
       console.error("No token found in localStorage");
-      // Có thể redirect về trang login ở đây
       return;
     }
 
@@ -56,7 +55,9 @@ const Room = () => {
         console.error("Error when fetch room!", err);
         alert(" Could not fetch room data!");
       });
-   };
+
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || user.role !== "landlord") {
@@ -106,7 +107,7 @@ const Room = () => {
     filterRooms();
   };
   const handleCustomersClick = () => {
-    console.log("Quản lý khách hàng");
+    navigate("/customer");
   };
 
   const handleEditRoom = (roomId) => {
@@ -117,7 +118,7 @@ const Room = () => {
   const handleDeleteRoom = async (roomId) => {
     const room = rooms.find((r) => r._id === roomId);
     if (room.currentContractId) {
-      alert("⚠️ This room has an active contract and cannot be disabled.");
+      alert("This room has an active contract and cannot be disabled.");
       return;
     }
     try {
@@ -169,6 +170,7 @@ const Room = () => {
       <div className="room-content">
         <div className="room-wrapper">
           <h2 className="room-title">Room Management</h2>
+          <div className="break"></div>
           <div className="roompage-actions">
             <select
               className="dropdown"
